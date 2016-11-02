@@ -1,0 +1,38 @@
+<script>
+function confirmDelete(url) {
+  var ok = confirm('Are you sure you want to delete this publication?');
+  if (ok) {
+    $.post(url, function() { location.href = "/admin/list_publications"; });
+  }
+}
+</script>
+
+<div class="text-center">
+  <a class="btn btn-default" href="/admin/create_project_pub_form/[% project.project_id %]">Create Project Pub</a>
+
+  <a class="btn btn-default" href="/admin/edit_project/[% project.project_id %]">Back To Project</a>
+</div>
+
+<h1>[% title %]</h1>
+[% IF project.publications %]
+  <table class="table">
+    <tr>
+      <th>Title</th>
+      <th>Authors</th>
+      <th>Journal</th>
+      <th>&nbsp;</th>
+    </tr>
+    [% FOREACH pub IN project.publications %]
+      <tr>
+        <td><a href="/admin/view_publication/[% pub.id %]">[% pub.title %]</a></td>
+        <td>[% pub.author | truncate(30) %]</td>
+        <td>[% pub.journal %]</td>
+        <td>
+          <a class="btn btn-default" onclick="confirmDelete('/admin/delete_project_pub/[% pub.id %]')">Remove</a>
+        </td>
+      </tr>
+    [% END %]
+  </table>
+[% ELSE %]
+  No pubs.
+[% END %]

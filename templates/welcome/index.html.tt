@@ -1,0 +1,100 @@
+<div id="myCarousel" class="carousel slide" data-ride="carousel">
+  <ol class="carousel-indicators">
+    <li data-target="#myCarousel" data-slide-to="0" class="active"></li>
+    <li data-target="#myCarousel" data-slide-to="1"></li>
+    <li data-target="#myCarousel" data-slide-to="2"></li>
+  </ol>
+  <div class="carousel-inner" role="listbox">
+    <div class="item active">
+      <div class="container">
+        <div class="carousel-caption">
+          <h1>muSCOPE</h1>
+          <img src="/img/logo.png">
+          <br/>  
+        </div>
+      </div>
+    </div>
+    <div class="item">
+      <div class="container text-center">
+        <img src="/img/station-aloha.png" height="500">
+        <div class="carousel-caption text-center">
+          <p><a class="btn btn-lg btn-primary" href="http://aco-ssds.soest.hawaii.edu/ALOHA/" role="button">Station ALOHA</a></p>
+        </div>
+      </div>
+    </div>
+    <div class="item">
+      <div class="container text-center">
+        <img src="/img/ctdlower1.jpg" height="500">
+      </div>
+    </div>
+  </div>
+  <a class="left carousel-control" href="#myCarousel" role="button" data-slide="prev">
+    <span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span>
+    <span class="sr-only">Previous</span>
+  </a>
+  <a class="right carousel-control" href="#myCarousel" role="button" data-slide="next">
+    <span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span>
+    <span class="sr-only">Next</span>
+  </a>
+</div>
+
+<div class="container">
+  <div class="row">
+    <div class="col-md-4">
+      <h2>Search</h2>
+      <p>
+      <ul>
+        <li>
+        Search for something like &quot;<a href="/search?query=virus">virus</a>&quot; or &quot;<a href="/search?query=human">human</a>&quot; or &quot;<a href="/search?query=ocean">ocean</a>.&quot;  You can limit the results to projects, samples, or publications.
+        </li>
+        <li>
+        <a href="/sample/search">Search for samples by their metadata</a>
+        </li>
+        <li>
+        <a href="/sample/map_search">Use a map to find samples by location</a>
+        </li>
+      </ul>
+   </div>
+    <div class="col-md-4">
+      <h2>Browse</h2>
+      You can browse all our data interactively:
+      <ul>
+      <li><a href="/project/browse">Browse projects by domain of life</a>
+      <li><a href="/project/list">View all projects</a>
+      <li><a href="/publication/list">View all publications</a>
+      <li><a href="/assembly/list">View all assemblies</a>
+      </ul>
+    </div>
+    <div class="col-md-4">
+      <h2>Read</h2>
+      <p>
+      The <a href="/publication/list">publications list</a> shows all the 
+      papers associated with projects.
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-md-4">
+      <h2>Discover</h2>
+      <p>
+      Use <a href="http://imicrobe.us/tools/">iMicrobe's bioinformatics tool</a> in the
+      <a href="http://www.iplantcollaborative.org/ci/discovery-environment">iPlant
+        Disovery Environment</a> with data in the <a href="http://mirrors.iplantcollaborative.org/browse/iplant/home/shared/imicrobe">iPlant Data Store</a>.
+    </div>
+    <div class="col-md-4">
+      <h2>Featured</h2>
+      <p>
+      <ul>
+        <li><a href="/project/view/104">The MMETSP project</a></li>
+        <li><a href="/project/view/26">Global Ocean Sampling Expedition</a></li>
+        <li><a href="/project/view/94">Pacific Ocean Virome</a></li>
+      </ul>
+    </div>
+    <div class="col-md-4">
+      <h2>Recommended</h2>
+      <p>
+      Our <a href="/pubchase/list">reading list</a> is 
+      updated weekly by the <a href="http://pubchase.com">PubChase</a> 
+      recommendation algorithm.
+    </div>
+  </div>
+</div>

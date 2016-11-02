@@ -1,0 +1,25 @@
+{
+    "hypnotoad": {
+        "listen": [
+            "http://*:3004"
+        ],
+        "workers": "10"
+    },
+    "site_name": "muSCOPE",
+    "about_link": "http://muscope.org",
+    "download_link": "ftp://ftp.muscope.org",
+    "captcha_conf": "/usr/local/hurwitzlab/configs/web/muscope-captcha.yaml",
+    "gmap_api_key": "AIzaSyBSrS0rzU7Zc2k2Gv27sCiTP_Mss40PFJY",
+    "google_analytics_key": "UA-56769725-5",
+    "db": {
+        "name": "muscope",
+        "user": "imicrobe",
+        "password": "XgDeeWTAw4pI.",
+        "driver": "mysql"
+    },
+    "mongo": {
+        "host": "lipothrix.hpc.arizona.edu",
+        "port": "27017",
+        "dbname": "muscope"
+    }
+}

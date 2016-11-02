@@ -1,0 +1,56 @@
+[% USE Comma %]
+<script>
+$(document).ready(function() {
+  $('#pubs').dataTable({
+    "lengthMenu": [[10, 25, 50, -1], [10, 25, 50, "All"]],
+    "iDisplayLength": 10
+  });
+});
+</script>
+
+<div class="row">
+  <h1>[% title %] ([% pubs.count OR '0' | comma %])</h1>
+  [% IF pubs.count > 0 %]
+  <div class="pull-right">
+    <a href="/download"><span class="glyphicon glyphicon-download-alt" aria-hidden="true"></span></a>
+  </div>
+  <table id="pubs" class="display" cellspacing="0" width="100%">
+    <thead>
+      <tr>
+        <th>Title</th>
+        <th>Author</th>
+        <th>Journal</th>
+        <th>Date</th>
+        <th>PubMed</th>
+        <th>Project</th>
+      </tr>
+    </thead>
+    <tbody>
+    [% WHILE (pub = pubs.next) %]
+      <tr>
+        <td><a href="/publication/view/[% pub.publication_id %]">[% pub.title OR 'Untitled' %]</a></td>
+        <td>[% pub.author OR 'Unknown' %]</td>
+        <td>[% pub.journal OR 'Unknown' %]</td>
+        <td>[% pub.pub_date OR 'NA' %]</td>
+        <td>
+          [% IF pub.pubmed_id %]
+            <a href="http://www.ncbi.nlm.nih.gov/pubmed/?term=[% pub.pubmed_id %]">[% pub.pubmed_id %]</a>
+          [% ELSE %]
+            &nbsp;
+          [% END %]
+        </td>
+        <td>
+        [% IF pub.project_id %]
+          <a href="/project/view/[% pub.project_id %]">[% pub.project.project_name OR 'Untitled' %]</a>
+        [% ELSE %]
+          &nbsp;
+        [% END %]
+        </td>
+      </tr>
+    [% END %]
+    </tbody>
+  </table>
+  [% ELSE %]
+    No pubs.
+  [% END %]
+</div>

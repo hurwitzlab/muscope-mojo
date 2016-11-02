@@ -1,0 +1,41 @@
+[% SET iplant = 'http://mirrors.iplantcollaborative.org/browse' %]
+<div class="row">
+  <h1>[% title %]</h1>
+  <table class="table">
+    <tr>
+      <th>Project</th>
+      <td><a href="/project/view/[% assembly.project.id %]">[% assembly.project.project_name %]</a></td>
+    </tr>
+    <tr>
+      <th>Code</th>
+      <td>[% assembly.assembly_code %]</td>
+    </tr>
+    <tr>
+      <th>Samples ([% assembly.samples_rs.count %])</th>
+      <td>
+        <ul>
+        [% FOREACH sample IN assembly.samples %]
+          <li><a href="/sample/view/[% sample.id %]">[% sample.sample_name %]</a></li>
+        [% END %]
+        </ul>
+      </td>
+    </tr>
+    <tr>
+      <th>Description</th>
+      <td>[% assembly.description %]</td>
+    </tr>
+    <tr>
+      <th>CDS</th>
+      <td>[% IF assembly.cds_file %]<a href="[% iplant %][% assembly.cds_file %]"><span class="glyphicon glyphicon-file" aria-hidden="true"></span></a>[% ELSE %]N/A[% END %]</td>
+    </tr>
+    <tr>
+      <th>NT</th>
+      <td>[% IF assembly.nt_file %]<a href="[% iplant %][% assembly.nt_file %]"><span class="glyphicon glyphicon-file" aria-hidden="true"></span></a>[% ELSE %]N/A[% END %]</td>
+    </tr>
+    <tr>
+      <th>Peptides</th>
+      <td>[% IF assembly.pep_file %]<a href="[% assembly.pep_file %]"><span class="glyphicon glyphicon-file" aria-hidden="true"></span></a>[% ELSE %]N/A[% END %]</td>
+    </tr>
+  </table>
+  </p>
+</div>
