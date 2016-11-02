@@ -32,27 +32,22 @@ $(document).ready(function() {
     <table id="samples-tbl" class="display" cellspacing="0" width="100%">
      <thead>
      <tr>
-       <th>Domain</th>
-       <th>Project</th>
+       <th>Cruise</th>
+       <th>Station</th>
+       <th>Cast</th>
+       <th>Investigator</th>
        <th>Sample</th>
-       <th>Type</th>
-       <th># Files</th>
      </tr>
      </thead>
 
      <tbody>
-     [% SET url = "http://mirrors.iplantcollaborative.org/browse" %]
      [% FOREACH sample IN samples %]
        <tr>
-         <td>[% sample.domain_name %]</td>
-         <td>
-           <a href="/project/view/[% sample.project_id %]">[% sample.project_name | truncate(40) %]</a>
-         </td>
-         <td>
-           <a href="/sample/view/[% sample.sample_id %]">[% sample.sample_name %]</a>
-         </td>
-         <td>[% sample.sample_type OR 'NA' %]</td>
-         <td>[% sample.num_files OR '0' %]</td>
+         <td><a href="/cruise/view/[% sample.cast.station.cruise.id %]">[% sample.cast.station.cruise.cruise_name %]</a></td>
+         <td><a href="/station/view/[% sample.cast.station.id %]">[% sample.cast.station.station_number %]</a></td>
+         <td><a href="/cast/view/[% sample.cast.id %]">[% sample.cast.cast_number %]</a></td>
+         <td><a href="/investigator/view/[% sample.investigator.id %]">[% sample.investigator.investigator_name OR 'NA' %]</a></td>
+         <td><a href="/sample/view/[% sample.id %]">[% sample.sample_name %]</a></td>
        </tr>
      [% END %]
      </tbody>

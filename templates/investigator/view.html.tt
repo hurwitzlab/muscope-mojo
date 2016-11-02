@@ -1,3 +1,5 @@
+[% USE Comma %]
+
 <script type="text/javascript">
 var map;
 function initialize() {
@@ -10,11 +12,11 @@ function initialize() {
     [% project_ids.push(p2i.project_id) %]
   [% END %]
   $.getJSON(
-    '/sample/list.json?project_id=[% project_ids.join(",") %]',
+    '/sample/list.json?investigator_id=[% investigator.id %]',
     function(data) { 
       $.each(data, function(i, sample) {
-        if (sample.latitude && sample.longitude) {
-          var pos = new google.maps.LatLng(sample.latitude, sample.longitude);
+        if (sample.lat && sample.lon) {
+          var pos = new google.maps.LatLng(sample.lat, sample.lon);
 
           var marker = new google.maps.Marker({
             position: pos,
@@ -47,7 +49,7 @@ $(document).ready(function() {
     "stateSave": true
   };
 
-  $('#projects-tbl').dataTable(dt_opts);
+  $('#samples-tbl').dataTable(dt_opts);
 
   $('a[href="#map"]').on('shown.bs.tab', function(e) {
     lastCenter=map.getCenter();
@@ -62,6 +64,7 @@ $(document).ready(function() {
   <div class="bs-component">
     <ul class="nav nav-tabs">
       <li class="active"><a href="#info" data-toggle="tab">Info</a></li>
+      <li><a href="#samples" data-toggle="tab">Samples ([% investigator.samples_rs.count | comma %])</a></li>
       <li><a href="#map" data-toggle="tab">Samples Map</a></li>
     </ul>
 
@@ -78,36 +81,41 @@ $(document).ready(function() {
             <th>Institution</th>
             <td>[% investigator.institution OR 'NA' %]</td>
           </tr>
-          <tr>
-            <th>Projects ([% investigator.project_to_investigators_rs.count %])</th>
-            <td>
-              [% IF investigator.project_to_investigators_rs.count > 0 %]
-                <ul>
-                [% FOREACH p2i IN investigator.project_to_investigators %]
-                  <li><a href="/project/view/[% p2i.project_id %]">[% p2i.project.project_name OR 'NA' %]</a></li>
-                [% END %]
-                </ul>
-              [% ELSE %]
-                None.
-              [% END %]
-            </td>
-          </tr>
-          <tr>
-            <th>Samples ([% investigator.sample_to_investigators_rs.count %])</th>
-            <td>
-              [% IF investigator.sample_to_investigators_rs.count > 0 %]
-                <ul>
-                [% FOREACH s2i IN investigator.sample_to_investigators %]
-                  <li><a href="/sample/view/[% s2i.sample_id %]">[% s2i.sample.project.project_name %]: [% s2i.sample.sample_name OR 'NA' %]</a></li>
-                [% END %]
-                </ul>
-              [% ELSE %]
-                None.
-              [% END %]
-            </td>
-          </tr>
         </table>
         </p>
+      </div>
+      <div class="tab-pane fade" id="samples">
+        <br/>
+        [% IF investigator.samples_rs.count > 0 %]
+          <table id="samples-tbl" class="display" cellspacing="0" width="100%">
+            <thead>
+              <th>Cruise</th>
+              <th>Station</th>
+              <th>Cast</th>
+              <th>Sample Name</th>
+            </thead>
+            <tbody>
+              [% FOREACH sample IN investigator.samples %]
+              <tr>
+                <td>
+                  <a href="/cruise/view/[% sample.cast.station.cruise.id %]">[% sample.cast.station.cruise.cruise_name OR 'NA' %]</a>
+                </td>
+                <td>
+                  <a href="/station/view/[% sample.cast.station.id %]">[% sample.cast.station.station_number OR 'NA' %]</a>
+                </td>
+                <td>
+                  <a href="/cast/view/[% sample.cast.id %]">[% sample.cast.cast_number OR 'NA' %]</a>
+                </td>
+                <td>
+                  <a href="/sample/view/[% sample.id %]">[% sample.sample_name OR 'NA' %]</a>
+                </td>
+              </tr>
+              [% END %]
+            </tbody>
+          </table>
+        [% ELSE %]
+          No samples.
+        [% END %]
       </div>
       <div class="tab-pane fade" id="map">
         <br/>

@@ -6,18 +6,15 @@ $(document).ready(function() {
     "stateSave": true
   };
 
-  $('#downloads-tbl').dataTable(dt_opts);
+  $('#ctd-tbl').dataTable(dt_opts);
 });
 </script>
 
 [% USE Comma %]
 
-[%- SET num_download_files = sample.sample_files_rs.count + assembly_files.size + combined_assembly_files.size;
--%]
-
 [%- 
-  SET latitude = location.latitude;
-  SET longitude = location.longitude;
+  SET latitude = sample.cast.station.latitude;
+  SET longitude = sample.cast.station.longitude;
   SET show_map = latitude AND longitude; 
 -%]
 
@@ -53,16 +50,11 @@ $(document).ready(function() {
 [% END %]
 
 <div class="row">
-  <h1 id="nav-tabs">Sample: [% sample.sample_name %]</h1>
+  <h1 id="nav-tabs">Sample: [% sample.cast.station.cruise.cruise_name %] [% sample.sample_name %]</h1>
   <div class="bs-component">
     <ul class="nav nav-tabs">
       <li class="active"><a href="#info" data-toggle="tab">Info</a></li>
-      [% FOREACH category IN attributes.keys.sort %]
-      <li><a href="#attr_[% category %]" data-toggle="tab">[% category.replace('_', ' ') | ucfirst %]</a></li>
-      [% END %]
-      <li><a href="#downloads" data-toggle="tab">Downloads ([% num_download_files OR '0' %])</a></li>
-      <li><a href="#ftp" data-toggle="tab">FTP</a></li>
-      [% IF sample.sample_to_ontologies_rs.count > 0 %]<li><a href="#ontology" data-toggle="tab">Ontology ([% sample.sample_to_ontologies_rs.count %])</a></li>[% END %]
+      <li><a href="#sample_ctd" data-toggle="tab">CTD ([% sample.sample_ctds_rs.count OR '0' %])</a></li>
       [% IF show_map %]<li><a href="#map" data-toggle="tab">Map</a></li>[% END %]
     </ul>
 
@@ -77,202 +69,52 @@ $(document).ready(function() {
             </td>
           </tr>
           <tr>
-            <th>Sample Type</th>
-            <td>[% sample.sample_type %]</td>
-          </tr>
-          <tr>
-            <th>Project</th>
+            <th>Investigator</th>
             <td>
-              <a href="/project/view/[% sample.project_id %]">[% sample.project.project_name %]</a>
+              <a href="[% sample.investigator.id %]">[% sample.investigator.investigator_name %]</a>
             </td>
           </tr>
           <tr>
-            <th>Investigators ([% sample.sample_to_investigators_rs.count %])</th>
+            <th>Cruise</th>
             <td>
-              [% IF sample.sample_to_investigators_rs.count > 0 %]
-                <ul>
-                [% FOREACH s2i IN sample.sample_to_investigators %]
-                  [% SET inv = s2i.investigator %]
-                  <li><a href="/investigator/view/[% inv.id %]">[% inv.investigator_name %] [% IF inv.institution %]([% inv.institution %])[% END %]</a>
-                  </li>
-                [% END %]
-                </ul>
-              [% ELSE %]
-                N/A
-              [% END %]
+              <a href="/cruise/view/[% sample.cast.station.cruise.id %]">[% sample.cast.station.cruise.cruise_name %]</a>
             </td>
           </tr>
           <tr>
-            <th>URL</th>
+            <th>Cast</th>
             <td>
-              [% IF sample.url %]<a href="[% sample.url %]">[% sample.url %]</a>[% ELSE %]N/A[% END %]
+              <a href="/cast/view/[% sample.cast.id %]">[% sample.cast.cast_number %]</a>
             </td>
           </tr>
           <tr>
-            <th>Description</th>
+            <th>Station</th>
             <td>
-              [% FOREACH fld IN [ 'description', 'sample_description', 'comments' ] %]
-                [% SET val = sample.$fld %]
-                [% IF val %]
-                  <p>
-                  [% val.replace('\n\n', '<p>') OR 'N/A' %]
-                [% END %]
-              [% END %]
+              <a href="/station/view/[% sample.cast.station.id %]">[% sample.cast.station.station_number %]</a> ([% sample.cast.station.longitude %], [% sample.cast.station.latitude %])
             </td>
           </tr>
-          [% IF sample.mmetsp_id %]
-            <tr>
-              <th>MMETSP ID</th>
-              <td>
-                [% sample.mmetsp_id %]
-              </td>
-            </tr>
-          [% END %]
-          <tr>
-            <th>Sample Accession</th>
-            <td>[% sample.sample_acc OR 'N/A' %]</td>
-          </tr>
-
-          <tr>
-            <th>Assembly</th>
-            <td>
-              [% IF sample.assembly_id %]
-                <a href="/assembly/view/[% sample.assembly.id %]">[% sample.assembly.assembly_name %]</a></li>
-              [% ELSE %]
-                &nbsp;
-              [% END %]
-              <ul>
-            </td>
-          </tr>
-
-          [% IF sample.combined_assembly %]
-            <tr>
-              <th>Combined Assembly</th>
-              <td>
-                <a href="/combined_assembly/view/[% sample.combined_assembly.id %]">[% sample.combined_assembly.assembly_name OR 'N/A' %]</a> 
-              </td>
-            </tr>
-          [% END %]
-          [% IF sample.taxon_id %]
-            <tr>
-              <th>Taxon ID</th>
-              <td>
-                  <a href="http://www.ncbi.nlm.nih.gov/taxonomy/?term=[% sample.taxon_id %]">[% sample.taxon_id %]</a>
-              </td>
-            </tr>
-          [% END %]
-          [% FOREACH fld IN ['superkingdom', 'torder', 'phylum', 'genus', 'species', 'strain', 'importance', 'additional_citations'] %]
-            [% SET val = sample.$fld %]
-            [% IF val %]
-              <tr>
-                <th>
-                  [% IF fld == 'torder' %]Order[% ELSE %][% fld | ucfirst %][% END %]
-                </th>
-                <td>[% val %]</td>
-              </tr>
-            [% END %]
-          [% END %]
         </table>
       </div>
 
-      [% FOREACH category IN attributes.keys.sort %]
-        <div class="tab-pane fade" id="attr_[% category %]">
-          <br/>
-            <table class="table">
-              [% FOREACH attr IN attributes.${category} %]
-                <tr>
-                  <th>[% attr.sample_attr_type.type.replace('_', ' ') | ucfirst %]</th>
-                  <td>
-                  [% IF attr.sample_attr_type.url_template; USE f=String(attr.attr_value); SET url=f.format(attr.sample_attr_type.url_template); %]<a href="[% url %]">[% END %][% attr.attr_value %][% IF attr.url_template %]</a>[% END %]
-                  </td>
-                  <td>
-                    [% attr.unit OR '&nbsp;' %]
-                  </td>
-                </tr>
-              [% END %]
-            </table>
-        </div>
-      [% END %]
-
-      <div class="tab-pane fade" id="ftp">
+      <div class="tab-pane fade" id="sample_ctd">
         <br/>
-        <ul>
-          <li><a href="ftp://ftp.imicrobe.us/projects/[% sample.project_id %]">Project folder</a></li>
-          <li><a href="ftp://ftp.imicrobe.us/projects/[% sample.project_id %]/samples/[% sample.id %]">Sample folder</a></li>
-        </ul>
-      </div>
-
-      <div class="tab-pane fade" id="downloads">
-        <br/>
-        [% SET url = "http://mirrors.iplantcollaborative.org/browse" %]
-        [% IF sample.sample_files_rs.count > 0 %]
-          [% IF sample.sample_files_rs.count > 0 %]
-            <div class="pull-right">
-              <a href="/download?url=/sample/sample_file_list/[% sample.id %]"><span class="glyphicon glyphicon-download-alt" aria-hidden="true"></span></a>
-            </div>
-            <table id="downloads-tbl" class="display" cellspacing="0" width="100%">
+          <table class="display" id="ctd-tbl">
             <thead>
               <tr>
                 <th>Type</th>
-                <th>#Seqs</th>
-                <th>#BP</th>
-                <th>Avg. Len.</th>
-                <th>%GC</th>
-                <th>Location</th>
+                <th>Value</th>
+                <th>Unit</th>
               </tr>
             </thead>
             <tbody>
-            [% FOREACH f IN sample.sample_files %]
+            [% FOREACH sample_ctd IN sample.sample_ctds %]
               <tr>
-                <td>[% f.sample_file_type.type.ucfirst.replace('_',' ') %]</td>
-                <td align="right">[% f.num_seqs | comma %]</td>
-                <td align="right">[% f.num_bp | comma %]</td>
-                <td align="right">[% f.avg_len %]</td>
-                <td align="right">[% f.pct_gc %]</td>
-                <td><a href="[% UNLESS f.file.match('^ftp:'); url; END %][% f.file %]"><span class="glyphicon glyphicon-file" aria-hidden="true"></span>&nbsp;[% f.file %]</a></td>
+                <th>[% sample_ctd.ctd_type.ctd_type.replace('_', ' ') | ucfirst %]</th>
+                <td>[% sample_ctd.ctd_value %]</td>
+                <td>[% sample_ctd.ctd_type.unit OR '&nbsp;' %]</td>
               </tr>
             [% END %]
             </tbody>
-            </table>
-          [% END %]
-        [% END %]
-        [% IF assembly_files.size > 0 %]
-          <b>Assembly Files</b>
-          <ul>
-            [% FOREACH f IN assembly_files %]
-            <li><a href="[% url %][% f.file %]"><span class="glyphicon glyphicon-file" aria-hidden="true"></span>&nbsp;[% f.type.ucfirst.replace('_',' ') %]</a>
-            [% END %]
-          </ul>
-        [% END %]
-        [% IF combined_assembly_files_rs.count > 0 %]
-          <b>Combined Assembly Files ([% combined_assembly_files_rs.count %])</b>
-          <ul>
-            [% FOREACH f IN combined_assembly_files %]
-            <li><a href="[% url %][% f.file %]"><span class="glyphicon glyphicon-file" aria-hidden="true"></span>&nbsp;[% f.type.ucfirst.replace('_',' ') %]</a>
-            [% END %]
-          </ul>
-        [% END %]
-        </p>
-      </div>
-
-      <div class="tab-pane fade" id="ontology">
-        <br/>
-        [% IF sample.sample_to_ontologies_rs.count > 0 %]
-          <ul>
-          [% FOREACH o IN sample.sample_to_ontologies %]
-            <li>
-            [% 
-              SET url_template=o.ontology.ontology_type.url_template; 
-              SET acc=o.ontology.ontology_acc;
-              IF url_template; USE f=String(acc.replace(':', '_')); SET url=f.format(url_template); %]<a href="[% url %]">[% END %][% acc %][% IF url_template %]</a>
-            [% END %]
-            [% IF o.ontology.label %] ([% o.ontology.label %])[% END %]
-            </li>
-          [% END %]
-          </ul>
-        [% ELSE %]
-          N/A
-        [% END %]
+          </table>
       </div>
 
       [% IF show_map %]

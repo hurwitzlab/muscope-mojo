@@ -50,17 +50,9 @@
             <li class="dropdown">
               <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Browse<span class="caret"></span></a>
               <ul class="dropdown-menu" role="menu">
-                <li><a href="/project/list">Projects</a></li>
-                <li><a href="/project_group/list">Project Groups</a></li>
-                <li><a href="/project/browse">Domains of Life</a></li>
                 <li><a href="/investigator/list">Investigators</a></li>
-                <li><a href="/assembly/list">Assemblies</a></li>
-                <li><a href="/combined_assembly/list">Combined Assemblies</a></li>
+                <li><a href="/cruise/list">Cruises</a></li>
                 <li><a href="/sample/list">Samples</a></li>
-                <li><a href="/publication/list">Publications</a></li>
-                <li><a href="/reference/list">Reference Data Sets</a></li>
-                <li><a href="/pubchase/list">Recommended Reading</a></li>
-                <li><a href="/protocol/list">Protocols</a></li>
               </ul>
             </li>
             <li><a href="[% config.about_link OR '/' %]">About</a></li>
