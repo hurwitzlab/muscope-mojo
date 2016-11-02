@@ -1,0 +1,57 @@
+[% USE Comma %]
+
+<script>
+$(document).ready(function() {
+  $('#cruises').dataTable({
+    "lengthMenu": [[10, 25, 50, -1], [10, 25, 50, "All"]],
+    "iDisplayLength": 10,
+    "stateSave": true
+  });
+});
+</script>
+
+<div class="row">
+  <h1>Cruises ([% cruises.count OR '0' %])</h1>
+  [% IF domain %]
+    <div class="well well-sm text-center">
+    <a href="[% c.req.url.path %]"><span class="glyphicon glyphicon-remove-circle"></span>&nbsp;[% domain %] only</a>
+    </div>
+  [% END %]
+  [% IF cruises.count > 0 %]
+  <div class="pull-right">
+    <a href="/download"><span class="glyphicon glyphicon-download-alt" aria-hidden="true"></span></a>
+  </div>
+  <table id="cruises" class="display" cellspacing="0" width="100%">
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>PI(s)</th>
+        <th>&#35;&nbsp;Samples</th>
+      </tr>
+    </thead>
+    <tbody>
+    [% FOREACH cruise IN cruises.next %]
+      <tr>
+        <td><a href="/cruise/view/[% cruise.id %]">[% cruise.cruise_name | truncate(70) %]</a></td>
+        <td>
+          [% 
+            IF cruise.investigators.size > 0; 
+              SET investigators=[]; 
+              FOREACH inv IN cruise.investigators;
+                investigators.push("<a href=\"/investigator/view/" _ inv.investigator_id _ "\">" _ inv.investigator_name _ "</a>");
+              END;
+              investigators.join(', ');
+            ELSE;
+              'NA';
+            END;
+          %]
+        </td>
+        <td align="right">[% cruise.num_samples | comma %]</td>
+      </tr>
+    [% END %]
+    </tbody>
+  </table>
+  [% ELSE %]
+    No cruises.
+  [% END %]
+</div>
