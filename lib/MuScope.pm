@@ -67,11 +67,13 @@ sub startup {
 #
 #    $r->post('/admin/update_sample')->to('admin#update_sample');
 #
-#    #
-#    # User endpoints
-#    #
-#    $r->get('/')->to('welcome#index');
-#
+    #
+    # User endpoints
+    #
+    $r->get('/')->to('welcome#index');
+
+    $r->get('/feedback')->to('feedback#form');
+
 #    $r->get('/assembly/info')->to('assembly#info');
 #
 #    $r->get('/assembly/list')->to('assembly#list');
@@ -88,13 +90,18 @@ sub startup {
 #
 #    $r->post('/download/get')->to('download#get');
 #
-#    $r->get('/feedback')->to('feedback#form');
-#
+
 #    $r->post('/feedback/submit')->to('feedback#submit');
 #
 #    $r->get('/index')->to('welcome#index');
 #
 #    $r->get('/info')->to('welcome#index');
+#
+    $r->get('/library_kit/view/:library_kit_id')->to('library_kit#view');
+
+    $r->get('/filter_type/view/:filter_type_id')->to('filter_type#view');
+
+    $r->get('/sequencing_method/view/:sequencing_method_id')->to('sequencing_method#view');
 
     $r->get('/investigator/list')->to('investigator#list');
 
@@ -107,6 +114,8 @@ sub startup {
     $r->get('/cruise/browse')->to('cruise#browse');
 
     $r->get('/cruise/view/:cruise_id')->to('cruise#view');
+
+    $r->get('/station/list/:cruise_id')->to('station#list');
 
     $r->get('/station/view/:station_id')->to('station#view');
 

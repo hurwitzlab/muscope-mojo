@@ -69,6 +69,10 @@ $(document).ready(function() {
             </td>
           </tr>
           <tr>
+            <th>Sequence Name</th>
+            <td>[% sample.seq_name %]</td>
+          </tr>
+          <tr>
             <th>Investigator</th>
             <td>
               <a href="[% sample.investigator.id %]">[% sample.investigator.investigator_name %]</a>
@@ -90,6 +94,44 @@ $(document).ready(function() {
             <th>Station</th>
             <td>
               <a href="/station/view/[% sample.cast.station.id %]">[% sample.cast.station.station_number %]</a> ([% sample.cast.station.longitude %], [% sample.cast.station.latitude %])
+            </td>
+          </tr>
+          <tr>
+            <th>Depth</th>
+            <td>[% sample.depth OR 'NA' %]</td>
+          </tr>
+          <tr>
+            <th>Filter Min</th>
+            <td>[% sample.filter_min OR 'NA' %]</td>
+          </tr>
+          <tr>
+            <th>Filter Type</th>
+            <td>
+              [% IF sample.filter_type %]
+                <a href="/filter_type/view/[% sample.filter_type.id %]">[% sample.filter_type.filter_type %]</a>
+              [% ELSE %]
+                NA
+              [% END %]
+            </td>
+          </tr>
+          <tr>
+            <th>Seq. Method</th>
+            <td>
+              [% IF sample.sequencing_method %]
+                <a href="/sequencing_method/view/[% sample.sequencing_method.id %]">[% sample.sequencing_method.sequencing_method %]</a>
+              [% ELSE %]
+                NA
+              [% END %]
+            </td>
+          </tr>
+          <tr>
+            <th>Lib. Kit</th>
+            <td>
+              [% IF sample.library_kit %]
+                <a href="/library_kit/view/[% sample.library_kit.id %]">[% sample.library_kit.library_kit %]</a>
+              [% ELSE %]
+                NA
+              [% END %]
             </td>
           </tr>
         </table>

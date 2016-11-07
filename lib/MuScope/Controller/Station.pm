@@ -31,4 +31,34 @@ sub view {
     );
 }
 
+# ----------------------------------------------------------------------
+sub list {
+    my $self      = shift;
+    my $schema    = $self->db->schema;
+    my $cruise_id = $self->param('cruise_id');
+    my $Cruise    = $self->db->schema->resultset('Cruise')->find($cruise_id)
+      or return $self->reply->exception("Bad cruise id ($cruise_id)");
+
+    $self->respond_to(
+        json => sub {
+            $self->render( json => 
+                [ map {{$_->get_inflated_columns}} $Cruise->stations ]
+            );
+        },
+
+        html => sub {
+            $self->layout('default');
+
+            $self->render( 
+                cruise  => $Cruise, 
+                title   => 'Stations',
+            );
+        },
+
+        txt => sub {
+            $self->render( text => dump($Cruise->stations) );
+        },
+    );
+}
+
 1;

@@ -83,8 +83,8 @@ sub list {
                 json => [ 
                     map {{
                         $_->get_inflated_columns,
-                        lat => $_->cast->station->latitude,
-                        lon => $_->cast->station->longitude,
+                        latitude => $_->cast->station->latitude,
+                        longitude => $_->cast->station->longitude,
                     }} 
                     @Samples 
                 ]

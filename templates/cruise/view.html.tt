@@ -8,49 +8,36 @@ $(document).ready(function() {
   };
 
   $('#stations-tbl').dataTable(dt_opts);
+  $('#samples-tbl').dataTable(dt_opts);
 });
 
 var map;
 function initialize() {
   var center = new google.maps.LatLng(0, 0);
-  map = new google.maps.Map(document.getElementById("map-canvas"), 
-    { zoom: 2, center: center });
+  map = new google.maps.Map(document.getElementById("map-canvas"), { zoom: 6 });
 
   $.getJSON(
-    '/sample/list.json?cruise_id=[% cruise.cruise_id %]',
+    '/station/list/[% cruise.cruise_id %].json',
     function(data) { 
-      //dot = 'https://maps.gstatic.com/intl/en_ALL/mapfiles/markers2/measle.png';
-      $.each(data, function(i, sample) {
-        if (sample.latitude && sample.longitude) {
-          var pos = new google.maps.LatLng(sample.latitude, sample.longitude);
+      $.each(data, function(i, station) {
+        if (station.latitude && station.longitude) {
+          var pos = new google.maps.LatLng(station.latitude, station.longitude);
 
           var marker = new google.maps.Marker({
-            //icon: dot
             position: pos,
             map: map,
-            title: sample.sample_name
+            title: station.station_number
           });
 
-          var desc = '<a href="/sample/view/' + sample.sample_id + '"\>' +
-              sample.sample_name + '</a><br/><ul>';
-
-          $.each(
-            ['phylum', 'class', 'family', 'genus', 'species', 'strain'],
-            function(i, fld) {
-              var val = sample[fld];
-              if (val) {
-                desc += '<li>' + fld + ': ' + val;
-              }
-            }
-          );
-
           var infowindow = new google.maps.InfoWindow({
-            content: desc
+            content: '<a href="/station/view/' + station.station_id + '"\>' +
+              station.station_number + '</a><br/><ul>'
           });
 
           google.maps.event.addListener(marker, 'click', function() {
-            infowindow.open(map,marker);
+            infowindow.open(map, marker);
           });
+          map.setCenter(pos);
         }
       });
     }
@@ -74,7 +61,8 @@ $(document).ready(function() {
     <ul class="nav nav-tabs">
       <li class="active"><a href="#info" data-toggle="tab">Info</a></li>
       <li><a href="#stations" data-toggle="tab">Stations ([% cruise.stations_rs.count OR '0' %])</a></li>
-      <li><a href="#map" data-toggle="tab">Samples Map</a></li>
+      <li><a href="#samples" data-toggle="tab">Samples ([% cruise.num_samples OR '0' %])</a></li>
+      <li><a href="#map" data-toggle="tab">Stations Map</a></li>
     </ul>
 
     <div id="tabContent" class="tab-content">
@@ -131,6 +119,40 @@ $(document).ready(function() {
           </table>
         [% ELSE %]
           No stations.
+        [% END %]
+        <p>
+      </div>
+
+      <div class="tab-pane fade" id="samples">
+        <br/>
+        [% IF cruise.num_samples > 0 %]
+          <table id="samples-tbl" class="display" cellspacing="0" width="100%">
+           <thead>
+           <tr>
+             <th>Name</th>
+             <th>Station</th>
+             <th>Cast</th>
+             <th>ColDt</th>
+             <th>ColTm</th>
+             <th>Depth</th>
+           </tr>
+           </thead>
+
+           <tbody>
+           [% FOREACH sample IN cruise.samples %]
+             <tr>
+               <td><a href="/sample/view/[% sample.sample_id %]">[% sample.sample_name %]</a></td>
+               <td><a href="/station/view/[% sample.cast.station.id %]">[% sample.cast.station.station_number %]</a></td>
+               <td><a href="/cast/view/[% sample.cast.id %]">[% sample.cast.cast_number %]</a></td>
+               <td>[% sample.cast.collection_date %]</td>
+               <td>[% sample.cast.collection_time %]</td>
+               <td>[% sample.depth %]</td>
+             </tr>
+           [% END %]
+           </tbody>
+          </table>
+        [% ELSE %]
+          No samples.
         [% END %]
         <p>
       </div>

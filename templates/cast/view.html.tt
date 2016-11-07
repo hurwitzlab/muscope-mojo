@@ -8,63 +8,6 @@ $(document).ready(function() {
 
   $('#samples-tbl').dataTable(dt_opts);
 });
-
-var map;
-function initialize() {
-  var center = new google.maps.LatLng(0, 0);
-  map = new google.maps.Map(document.getElementById("map-canvas"), 
-    { zoom: 2, center: center });
-
-  $.getJSON(
-    '/sample/list.json?cast_id=[% cast.cast_id %]',
-    function(data) { 
-      //dot = 'https://maps.gstatic.com/intl/en_ALL/mapfiles/markers2/measle.png';
-      $.each(data, function(i, sample) {
-        if (sample.latitude && sample.longitude) {
-          var pos = new google.maps.LatLng(sample.latitude, sample.longitude);
-
-          var marker = new google.maps.Marker({
-            //icon: dot
-            position: pos,
-            map: map,
-            title: sample.sample_name
-          });
-
-          var desc = '<a href="/sample/view/' + sample.sample_id + '"\>' +
-              sample.sample_name + '</a><br/><ul>';
-
-          $.each(
-            ['phylum', 'class', 'family', 'genus', 'species', 'strain'],
-            function(i, fld) {
-              var val = sample[fld];
-              if (val) {
-                desc += '<li>' + fld + ': ' + val;
-              }
-            }
-          );
-
-          var infowindow = new google.maps.InfoWindow({
-            content: desc
-          });
-
-          google.maps.event.addListener(marker, 'click', function() {
-            infowindow.open(map,marker);
-          });
-        }
-      });
-    }
-  );
-}
-
-$(document).ready(function() {
-  google.maps.event.addDomListener(window, "load", initialize);
-
-  $('a[href="#map"]').on('shown.bs.tab', function(e) {
-    lastCenter=map.getCenter();
-    google.maps.event.trigger(map, 'resize');
-    map.setCenter(lastCenter);
-  });
-});
 </script>
 
 <div class="row">
@@ -73,7 +16,6 @@ $(document).ready(function() {
     <ul class="nav nav-tabs">
       <li class="active"><a href="#info" data-toggle="tab">Info</a></li>
       <li><a href="#samples" data-toggle="tab">Samples ([% cast.samples_rs.count OR '0' %])</a></li>
-      <li><a href="#map" data-toggle="tab">Samples Map</a></li>
     </ul>
 
     <div id="tabContent" class="tab-content">
@@ -86,6 +28,28 @@ $(document).ready(function() {
               [% cast.cast_number %]&nbsp;<a href="[% c.req.url %].json"><span class="glyphicon glyphicon-download-alt" aria-hidden="true"></span></a>
             </td>
           </tr>
+          <tr>
+            <th>Location</th>
+            <td>
+              [% IF cast.station.latitude AND cast.station.longitude %]
+                [% cast.station.latitude %], [% cast.station.longitude %]
+              [% ELSE %]
+                NA
+              [% END %]
+            </td>
+          </tr>
+          <tr>
+            <th>Station</th>
+            <td>
+              <a href="/station/view/[% cast.station.id %]">[% cast.station.station_number %]</a>
+            </td>
+          </tr>
+          <tr>
+            <th>Cruise</th>
+            <td>
+              <a href="/cruise/view/[% cast.station.cruise.id %]">[% cast.station.cruise.cruise_name %]</a>
+            </td>
+          </tr>
         </table>
       </div>
 
@@ -95,8 +59,7 @@ $(document).ready(function() {
           <table id="samples-tbl" class="display" cellspacing="0" width="100%">
            <thead>
            <tr>
-             <th>Name</th>
-             <th>Rosette Pos</th>
+             <th>Sample Name</th>
              <th>PI</th>
            </tr>
            </thead>
@@ -105,7 +68,6 @@ $(document).ready(function() {
            [% FOREACH sample IN cast.samples %]
              <tr>
                <td><a href="/sample/view/[% sample.id %]">[% sample.sample_name %]</a></td>
-               <td>[% sample.rosette_position %]</td>
                <td>
                  [% IF sample.investigator_id %]
                    <a href="/investigator/view/[% sample.investigator.id %]">[% sample.investigator.investigator_name %]</a>

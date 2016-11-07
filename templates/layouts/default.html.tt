@@ -55,8 +55,8 @@
                 <li><a href="/sample/list">Samples</a></li>
               </ul>
             </li>
-            <li><a href="[% config.about_link OR '/' %]">About</a></li>
-            <li><a href="[% config.download_link OR '/' %]">Downloads</a></li>
+            <li><a href="http://docs.muscope.org">About</a></li>
+            <li><a href="ftp://ftp.muscope.org">FTP</a></li>
             <li><a href="/feedback">Feedback</a></li>
           </ul>
           <form class="navbar-form navbar-right" role="search" action="/search" method="GET">

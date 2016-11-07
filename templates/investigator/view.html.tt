@@ -3,20 +3,14 @@
 <script type="text/javascript">
 var map;
 function initialize() {
-  var center = new google.maps.LatLng(0, 0);
-  map = new google.maps.Map(document.getElementById("map-canvas"), 
-    { zoom: 2, center: center });
+  map = new google.maps.Map(document.getElementById("map-canvas"), { zoom: 4 });
 
-  [% SET project_ids=[] %]
-  [% FOREACH p2i IN investigator.project_to_investigators %]
-    [% project_ids.push(p2i.project_id) %]
-  [% END %]
   $.getJSON(
     '/sample/list.json?investigator_id=[% investigator.id %]',
     function(data) { 
       $.each(data, function(i, sample) {
-        if (sample.lat && sample.lon) {
-          var pos = new google.maps.LatLng(sample.lat, sample.lon);
+        if (sample.latitude && sample.longitude) {
+          var pos = new google.maps.LatLng(sample.latitude, sample.longitude);
 
           var marker = new google.maps.Marker({
             position: pos,
@@ -24,17 +18,16 @@ function initialize() {
             title: sample.sample_name
           });
 
-          var desc = '<a href="/sample/view/' + sample.sample_id + '"\>' +
-              sample.sample_name + '</a><br/><ul>';
-
           var infowindow = new google.maps.InfoWindow({
-            content: desc
+            content: '<a href="/sample/view/' + sample.sample_id + '"\>' +
+              sample.sample_name + '</a><br/><ul>'
           });
 
           google.maps.event.addListener(marker, 'click', function() {
             infowindow.open(map,marker);
           });
         }
+        map.setCenter(pos);
       });
     }
   );
