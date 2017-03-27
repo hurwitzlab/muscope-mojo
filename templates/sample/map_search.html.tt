@@ -174,7 +174,7 @@ $(document).ready(function() {
       <thead>
         <tr>
           <th>Sample</th>
-          <th>Project</th>
+          <th>Cruise</th>
           <th>PI</th>
         </tr>
       </thead>
@@ -182,8 +182,8 @@ $(document).ready(function() {
         {{#each samples}}
           <tr>
             <td><a target="_blank" href="/sample/view/{{this.sample_id}}">{{this.sample_name}}</a></td>
-            <td><a target="_blank" href="/project/view/{{this.project_id}}">{{this.project_name}}</a></td>
-            <td>{{this.pi}}</td>
+            <td><a target="_blank" href="/cruise/view/{{this.cruise_id}}">{{this.cruise_name}}</a></td>
+            <td><a target="_blank" href="/investigator/view/{{this.investigator_id}}">{{this.investigator_name}}</a></td>
           </tr>
         {{/each}}
       </tbody>

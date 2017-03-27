@@ -1,5 +1,4 @@
 <h1>Admin</h1>
 <ul>
-  <li><a href="/admin/list_projects">Projects</a></li>
-  <li><a href="/admin/list_publications">Publications</a></li>
+  <li><a href="/admin/list_investigators">Investigators</a></li>
 </ul>

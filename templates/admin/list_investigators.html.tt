@@ -1,0 +1,33 @@
+<script type="text/javascript">
+$(document).ready(function() {
+  $('#investigators-tbl').dataTable({
+    "lengthMenu": [[10, 25, 50, -1], [10, 25, 50, "All"]],
+    "iDisplayLength": 50,
+  });
+});
+</script>
+
+<h1>Investigators</h1>
+
+[% IF investigators.count > 0 %]
+<table id="investigators-tbl" class="display" cellspacing="0" width="100%">
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th># Cruises</th>
+    </tr>
+  </thead>
+  <tbody>
+    [% WHILE (investigator=investigators.next) %]
+    <tr>
+      <td>
+        <a href="/admin/edit_investigator/[% investigator.id %]">[% investigator.investigator_name %]</a>
+      </td>
+      <td>[% investigator.num_cruises %]</td>
+    </tr>
+    [% END %]
+  </tbody>
+</table>
+[% ELSE %]
+  No investigators.
+[% END %]

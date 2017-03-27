@@ -43,6 +43,7 @@ $(document).ready(function() {
   };
 
   $('#samples-tbl').dataTable(dt_opts);
+  $('#cruises-tbl').dataTable(dt_opts);
 
   $('a[href="#map"]').on('shown.bs.tab', function(e) {
     lastCenter=map.getCenter();
@@ -57,7 +58,10 @@ $(document).ready(function() {
   <div class="bs-component">
     <ul class="nav nav-tabs">
       <li class="active"><a href="#info" data-toggle="tab">Info</a></li>
+      <li><a href="#cruises" data-toggle="tab">Cruises ([% investigator.num_cruises OR '0' | comma %])</a></li>
       <li><a href="#samples" data-toggle="tab">Samples ([% investigator.samples_rs.count | comma %])</a></li>
+      <li><a href="#project" data-toggle="tab">Project</a></li>
+      <li><a href="#bio" data-toggle="tab">Bio</a></li>
       <li><a href="#map" data-toggle="tab">Samples Map</a></li>
     </ul>
 
@@ -76,6 +80,33 @@ $(document).ready(function() {
           </tr>
         </table>
         </p>
+      </div>
+      <div class="tab-pane fade" id="cruises">
+        <br/>
+        [% IF investigator.num_cruises > 0 %]
+          <table id="cruises-tbl" class="display" cellspacing="0" width="100%">
+            <thead>
+              <th>Cruise</th>
+              <th>Start</th>
+              <th>End</th>
+              <th># Samples</th>
+            </thead>
+            <tbody>
+              [% FOREACH cruise IN investigator.cruises %]
+              <tr>
+                <td>
+                  <a href="/cruise/view/[% cruise.id %]">[% cruise.cruise_name OR 'NA' %]</a>
+                </td>
+                <td>[% cruise.start_date OR 'NA' %]</td>
+                <td>[% cruise.end_date OR 'NA' %]</td>
+                <td>[% cruise.num_samples OR '0' %]</td>
+              </tr>
+              [% END %]
+            </tbody>
+          </table>
+        [% ELSE %]
+          No cruises.
+        [% END %]
       </div>
       <div class="tab-pane fade" id="samples">
         <br/>
@@ -109,6 +140,14 @@ $(document).ready(function() {
         [% ELSE %]
           No samples.
         [% END %]
+      </div>
+      <div class="tab-pane fade" id="project">
+        <br/>
+        [% investigator.project | html_para %]
+      </div>
+      <div class="tab-pane fade" id="bio">
+        <br/>
+        [% investigator.bio | html_para %]
       </div>
       <div class="tab-pane fade" id="map">
         <br/>

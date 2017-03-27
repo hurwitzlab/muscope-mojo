@@ -1,6 +1,7 @@
 package MuScope::Controller::Station;
 
 use Mojo::Base 'Mojolicious::Controller';
+use Data::Dump 'dump';
 
 # ----------------------------------------------------------------------
 sub view {

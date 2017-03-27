@@ -1,0 +1,47 @@
+<script type="text/javascript">
+$(document).ready(function() {
+  var dt_opts = {
+    "lengthMenu": [[10, 25, 50, -1], [10, 25, 50, "All"]],
+    "iDisplayLength": 50,
+    "stateSave": true
+  };
+
+  //$('#samples-tbl').dataTable(dt_opts);
+});
+</script>
+
+<h1>Cart ([% samples.size OR '0' %])</h1>
+[% IF samples.size > 0 %]
+[% IF app_ids.size > 0 %]
+  <form action="/cart/launch_app">
+  <select name="app_id">
+    <option value="">--Select App--</option>
+    [% FOREACH app_id IN app_ids %]
+      <option value="[% app_id %]">[% app_id %]</option>
+    [% END %]
+  </select>
+  <input type="submit">
+  </form>
+[% END %]
+<span class="pull-right"><a href="/cart/purge"><span class="glyphicon glyphicon-trash" aria-hidden="true"></span></a></span>
+  <table id="samples-tbl" class="table">
+    <thead>
+      <tr>
+        <th>Cruise</th>
+        <th>Sample</th>
+        <th>Remove</th>
+      </tr>
+    </thead>
+    <tbody>
+    [% FOREACH sample IN samples %]
+      <tr>
+        <td><a href="/cruise/view/[% sample.cruise.id %]">[% sample.cruise.cruise_name %]</a></td>
+        <td><a href="/sample/view/[% sample.id %]">[% sample.sample_name %]</a></td>
+        <td><a href="/cart/remove/[% sample.id %]"><span class="glyphicon glyphicon-remove-circle" aria-hidden="true"></span></a></td>
+      <tr>
+    [% END %]
+    </tbody>
+  </table>
+[% ELSE %]
+  No samples in cart.
+[% END %]

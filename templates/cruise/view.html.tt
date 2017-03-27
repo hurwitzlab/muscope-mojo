@@ -14,17 +14,15 @@ $(document).ready(function() {
 var map;
 function initialize() {
   var center = new google.maps.LatLng(0, 0);
-  map = new google.maps.Map(document.getElementById("map-canvas"), { zoom: 6 });
+  map = new google.maps.Map(document.getElementById("map-canvas"), { zoom: 4 });
 
   $.getJSON(
     '/station/list/[% cruise.cruise_id %].json',
     function(data) { 
       $.each(data, function(i, station) {
         if (station.latitude && station.longitude) {
-          var pos = new google.maps.LatLng(station.latitude, station.longitude);
-
           var marker = new google.maps.Marker({
-            position: pos,
+            position: new google.maps.LatLng(station.latitude, station.longitude),
             map: map,
             title: station.station_number
           });
@@ -37,9 +35,23 @@ function initialize() {
           google.maps.event.addListener(marker, 'click', function() {
             infowindow.open(map, marker);
           });
-          map.setCenter(pos);
+          //map.setCenter(marker.position);
         }
       });
+
+      var aloha_marker = new google.maps.Marker({
+          position: new google.maps.LatLng(22.45, -158.00),
+          map: map,
+          title: 'Station Aloha',
+      });
+
+      var infowindow = new google.maps.InfoWindow({content: 'Station Aloha'});
+
+      google.maps.event.addListener(aloha_marker, 'click', function() {
+        infowindow.open(map, aloha_marker);
+      });
+
+      map.setCenter(aloha_marker.position);
     }
   );
 }

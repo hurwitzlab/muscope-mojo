@@ -19,7 +19,7 @@ $(document).ready(function() {
       <tr>
         <th>Name</th>
         <th>Inst</th>
-        <th># Projects</th>
+        <th># Cruises</th>
         <th># Samples</th>
       </tr>
     </thead>
@@ -28,8 +28,8 @@ $(document).ready(function() {
       <tr>
         <td><a href="/investigator/view/[% inv.id %]">[% inv.investigator_name OR 'NA' %]</a></td>
         <td>[% inv.institution OR '&nbsp;' %]</td>
-        <td>[% inv.project_to_investigators_rs.count OR '0' %]</td>
-        <td>[% inv.sample_to_investigators_rs.count OR '0' %]</td>
+        <td align="right">[% inv.num_cruises OR '0' | comma %]</td>
+        <td align="right">[% inv.samples_rs.count OR '0' | comma %]</td>
       </tr>
     [% END %]
     </tbody>

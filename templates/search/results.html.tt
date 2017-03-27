@@ -1,14 +1,9 @@
 [% 
   USE Comma;
   SET name_fields = {
-  'assembly'          = 'assembly_name',
-  'investigator'      = 'investigator_name',
-  'project'           = 'project_name',
-  'project_page'      = 'title',
-  'project_group'     = 'group_name',
-  'publication'       = 'title',
-  'sample'            = 'sample_name'
-  'combined_assembly' = 'assembly_name',
+  'investigator'  = 'investigator_name',
+  'sample'        = 'sample_name'
+  'cruise'        = 'cruise_name',
 } %]
 <div class="row">
 <h1>Search</h1>
@@ -18,7 +13,7 @@
   Found [% results.size | comma %] record[% IF results.size == 1; ''; ELSE; 's'; END %] 
   for &quot;[% query %].&quot;<br/>
   [% ELSE %]
-    Search for something like &quot;<a href="/search?query=virus">virus</a>&quot; or &quot;<a href="/search?query=human">human</a>&quot; or &quot;<a href="/search?query=ocean">ocean</a>.&quot;
+    Search for something like &quot;<a href="/search?query=HL2A">HL2A</a>&quot; or &quot;<a href="/search?query=delong">DeLong</a>&quot; or &quot;<a href="/search?query=CSHLIID20-03a-S09C001-0015">CSHLIID20-03a-S09C001-0015</a>.&quot;
   [% END %]
 
   <form class="form-inline" role="form">

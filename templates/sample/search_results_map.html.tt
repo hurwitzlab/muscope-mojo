@@ -10,6 +10,7 @@ function initialize() {
   if (qs) {
     $.get('/sample/search_results.json?' + qs,
       function(data) { 
+        console.log("data = " + JSON.stringify(data));
         $.each(data['samples'], function(i, sample) {
           if (sample.location__latitude && sample.location__longitude) {
             var pos = new google.maps.LatLng(sample.location__latitude, sample.location__longitude);

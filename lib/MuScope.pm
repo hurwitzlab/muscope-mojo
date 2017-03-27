@@ -12,15 +12,21 @@ sub startup {
 
     $self->sessions->default_expiration(86400);
 
+    $self->app->secrets(['N5DsbR4yYCi0Fe37yG9CCDTIGdCXYWE0GkrvMYKCEL80Mb9T5AinStEFygJ5wNoUmxrd51eR6IJKhLGkzsrXJKQhhpB86tjkL3EF']);
+
     my $r = $self->routes;
 
-#    # 
-#    # Admin endpoints
-#    # 
-#    $r->get('/admin')->to('admin#index');
-#
-#    $r->get('/admin/list_projects')->to('admin#list_projects');
-#
+    # 
+    # Admin endpoints
+    # 
+    $r->get('/admin')->to('admin#index');
+
+    $r->get('/admin/list_investigators')->to('admin#list_investigators');
+
+    $r->get('/admin/edit_investigator/:investigator_id')->to('admin#edit_investigator');
+
+    $r->post('/admin/update_investigator')->to('admin#update_investigator');
+
 #    $r->get('/admin/list_publications')->to('admin#list_publications');
 #
 #    $r->post('/admin/create_project_page')->to('admin#create_project_page');
@@ -97,6 +103,18 @@ sub startup {
 #
 #    $r->get('/info')->to('welcome#index');
 #
+    $r->post('/cart/add')->to('cart#add');
+
+    $r->get('/cart/launch_app')->to('cart#launch_app');
+
+    $r->get('/cart/icon')->to('cart#icon');
+
+    $r->get('/cart/remove/:item')->to('cart#remove');
+
+    $r->get('/cart/purge')->to('cart#purge');
+
+    $r->get('/cart/view')->to('cart#view');
+
     $r->get('/library_kit/view/:library_kit_id')->to('library_kit#view');
 
     $r->get('/filter_type/view/:filter_type_id')->to('filter_type#view');

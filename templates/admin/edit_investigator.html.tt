@@ -1,0 +1,30 @@
+<div class="row">
+  <h3>Edit Investigator</h3>
+  <form role="form" method="post" action="/admin/update_investigator">
+    <div class="form-group">
+      <label for="investigator_name">Investigator Name</label>
+      <input type="text" class="form-control" id="investigator_name" name="investigator_name" value="[% investigator.investigator_name %]">
+    </div>
+    <div class="form-group">
+      <label for="pi">Institution</label>
+      <input type="text" class="form-control" id="institution" name="institution" value="[% investigator.institution %]">
+    </div>
+    <div class="form-group">
+      <label for="institution">Website</label>
+      <input type="text" class="form-control" id="website" name="website" value="[% investigator.website %]">
+    </div>
+    <div class="form-group">
+      <label for="description">Project</label>
+      <textarea id="project" name="project" class="form-control" rows="10">[% investigator.project %]</textarea>
+    </div>
+    <div class="form-group">
+      <label for="description">Bio</label>
+      <textarea id="bio" name="bio" class="form-control" rows="10">[% investigator.bio %]</textarea>
+    </div>
+    <div class="text-center form-group">
+      <input type="hidden" name="investigator_id" value="[% investigator.id %]">
+      <button type="submit" class="btn btn-primary">Submit</button>
+      <br/>
+    </div>
+  </form>
+</div>

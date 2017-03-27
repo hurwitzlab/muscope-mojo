@@ -22,18 +22,35 @@ $(document).ready(function() {
 <script type="text/javascript">
 var map;
 function initialize() {
-    var pos = new google.maps.LatLng([% latitude %], [% longitude %]);
+    map = new google.maps.Map(document.getElementById("map-canvas"), {zoom: 4});
 
-    map = new google.maps.Map(document.getElementById("map-canvas"), 
-          { center: pos, zoom: 3 });
-
-    var marker = new google.maps.Marker({
-        position: pos,
-        title: '[% sample.sample_name %]'
+    var aloha_marker = new google.maps.Marker({
+        position: new google.maps.LatLng(22.45, -158),
+        title: 'Station Aloha',
+        map: map,
     });
 
-    marker.setMap(map);
-    map.setCenter(pos);
+    var aloha_infowindow = new google.maps.InfoWindow({content: 'Station Aloha'});
+
+    google.maps.event.addListener(aloha_marker, 'click', function() {
+      aloha_infowindow.open(map, aloha_marker);
+    });
+
+    var marker = new google.maps.Marker({
+        position: new google.maps.LatLng([% latitude %], [% longitude %]),
+        title: '[% sample.sample_name %]',
+        map: map,
+    });
+
+    var infowindow = new google.maps.InfoWindow({
+      content: 'Sample [% sample.sample_name %]'
+    });
+
+    google.maps.event.addListener(marker, 'click', function() {
+      infowindow.open(map, marker);
+    });
+
+    map.setCenter(aloha_marker.position);
 }
 
 $(document).ready(function() {
