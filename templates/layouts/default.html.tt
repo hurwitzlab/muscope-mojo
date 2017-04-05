@@ -53,8 +53,10 @@
                 <li><a href="/investigator/list">Investigators</a></li>
                 <li><a href="/cruise/list">Cruises</a></li>
                 <li><a href="/sample/list">Samples</a></li>
+                <li><a href="/cart/view">Cart ([% c.req.session.items.size OR '0' %])</a></li>
               </ul>
             </li>
+            <li><a href="http://agave.muscope.org/app">Apps</a></li>
             <li><a href="http://docs.muscope.org">About</a></li>
             <li><a href="ftp://ftp.muscope.org">FTP</a></li>
             <li><a href="/feedback">Feedback</a></li>

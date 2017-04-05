@@ -29,6 +29,14 @@ $(document).ready(function() {
             </td>
           </tr>
           <tr>
+            <th>Collection Date</th>
+            <td>[% cast.collection_date %]</td>
+          </tr>
+          <tr>
+            <th>Collection Time</th>
+            <td>[% cast.collection_time %]</td>
+          </tr>
+          <tr>
             <th>Location</th>
             <td>
               [% IF cast.station.latitude AND cast.station.longitude %]

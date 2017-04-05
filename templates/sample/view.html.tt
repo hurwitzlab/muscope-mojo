@@ -6,7 +6,8 @@ $(document).ready(function() {
     "stateSave": true
   };
 
-  $('#ctd-tbl').dataTable(dt_opts);
+  $('#attr-tbl').dataTable(dt_opts);
+  $('#data-tbl').dataTable(dt_opts);
 });
 </script>
 
@@ -71,7 +72,8 @@ $(document).ready(function() {
   <div class="bs-component">
     <ul class="nav nav-tabs">
       <li class="active"><a href="#info" data-toggle="tab">Info</a></li>
-      <li><a href="#sample_ctd" data-toggle="tab">CTD ([% sample.sample_ctds_rs.count OR '0' %])</a></li>
+      <li><a href="#sample_attr" data-toggle="tab">Attributes</a></li>
+      <li><a href="#data_products" data-toggle="tab">Data ([% sample.sample_files_rs.count OR '0' %])</a></li>
       [% IF show_map %]<li><a href="#map" data-toggle="tab">Map</a></li>[% END %]
     </ul>
 
@@ -90,6 +92,10 @@ $(document).ready(function() {
             <td>[% sample.seq_name %]</td>
           </tr>
           <tr>
+            <th>Sequence Type</th>
+            <td>[% sample.sequence_type OR 'NA' %]</td>
+          </tr>
+          <tr>
             <th>Investigator</th>
             <td>
               <a href="[% sample.investigator.id %]">[% sample.investigator.investigator_name %]</a>
@@ -102,24 +108,30 @@ $(document).ready(function() {
             </td>
           </tr>
           <tr>
-            <th>Cast</th>
-            <td>
-              <a href="/cast/view/[% sample.cast.id %]">[% sample.cast.cast_number %]</a>
-            </td>
-          </tr>
-          <tr>
             <th>Station</th>
             <td>
               <a href="/station/view/[% sample.cast.station.id %]">[% sample.cast.station.station_number %]</a> ([% sample.cast.station.longitude %], [% sample.cast.station.latitude %])
             </td>
           </tr>
           <tr>
-            <th>Depth</th>
-            <td>[% sample.depth OR 'NA' %]</td>
+            <th>Cast</th>
+            <td>
+              <a href="/cast/view/[% sample.cast.id %]">[% sample.cast.cast_number %]</a>
+            </td>
           </tr>
           <tr>
-            <th>Filter Min</th>
-            <td>[% sample.filter_min OR 'NA' %]</td>
+            <th>Collection Date</th>
+            <td>[% sample.cast.collection_date OR 'NA' %]</td>
+          </tr>
+          <tr>
+            <th>Collection Time</th>
+            <td>
+              [% IF sample.cast.collection_time %]
+                [% sample.cast.collection_time %] [% sample.cast.collection_time_zone %]
+              [% ELSE %] 
+                NA
+              [% END %] 
+            </td>
           </tr>
           <tr>
             <th>Filter Type</th>
@@ -154,26 +166,48 @@ $(document).ready(function() {
         </table>
       </div>
 
-      <div class="tab-pane fade" id="sample_ctd">
+      <div class="tab-pane fade" id="sample_attr">
         <br/>
-          <table class="display" id="ctd-tbl">
-            <thead>
-              <tr>
-                <th>Type</th>
-                <th>Value</th>
-                <th>Unit</th>
-              </tr>
-            </thead>
-            <tbody>
-            [% FOREACH sample_ctd IN sample.sample_ctds %]
-              <tr>
-                <th>[% sample_ctd.ctd_type.ctd_type.replace('_', ' ') | ucfirst %]</th>
-                <td>[% sample_ctd.ctd_value %]</td>
-                <td>[% sample_ctd.ctd_type.unit OR '&nbsp;' %]</td>
-              </tr>
-            [% END %]
-            </tbody>
-          </table>
+        <table class="display" id="attr-tbl">
+          <thead>
+            <tr>
+              <th>Category</th>
+              <th>Type</th>
+              <th>Value</th>
+              <th>Unit</th>
+            </tr>
+          </thead>
+          <tbody>
+          [% FOREACH sample_attr IN sample.sample_attrs %]
+            <tr>
+              <td>[% sample_attr.sample_attr_type.sample_attr_type_category.category %]</td>
+              <td>[% sample_attr.sample_attr_type.type %]</td>
+              <td>[% sample_attr.value %]</td>
+              <td>[% sample_attr.sample_attr_type.unit OR '&nbsp;' %]</td>
+            </tr>
+          [% END %]
+          </tbody>
+        </table>
+      </div>
+
+      <div class="tab-pane fade" id="data_products">
+        <br/>
+        <table class="display" id="data-tbl">
+          <thead>
+            <tr>
+              <th>Type</th>
+              <th>File</th>
+            </tr>
+          </thead>
+          <tbody>
+          [% FOREACH file IN sample.sample_files %]
+            <tr>
+              <td>[% file.sample_file_type.type %]</td>
+              <td>[% file.file %]</td>
+            </tr>
+          [% END %]
+          </tbody>
+        </table>
       </div>
 
       [% IF show_map %]

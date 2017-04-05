@@ -27,9 +27,9 @@ sub startup {
 
     $r->post('/admin/update_investigator')->to('admin#update_investigator');
 
-#    $r->get('/admin/list_publications')->to('admin#list_publications');
-#
-#    $r->post('/admin/create_project_page')->to('admin#create_project_page');
+    $r->get('/admin/create_investigator_form')->to('admin#create_investigator_form');
+
+    $r->post('/admin/create_investigator')->to('admin#create_investigator');
 #
 #    $r->post('/admin/create_project_pub')->to('admin#create_project_pub');
 #

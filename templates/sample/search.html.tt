@@ -256,9 +256,9 @@ function updateSearchResults(formData) {
       <tbody>
         {{#each samples}}
           <tr>
-            <td><input name="sample_id[]" type="checkbox" value="{{this.Specimen__sample_id}}"></td>
-            <td><a target="_blank" href="/sample/view/{{this.Specimen__sample_id}}">{{this.Specimen__sample_name}}</a></td>
-            <td><a target="_blank" href="/cruise/view/{{this.Specimen__cruise_id}}">{{this.Specimen__cruise_name}}</a></td>
+            <td><input name="sample_id[]" type="checkbox" value="{{this.Sample__sample_id}}"></td>
+            <td><a target="_blank" href="/sample/view/{{this.Sample__sample_id}}">{{this.Sample__sample_name}}</a></td>
+            <td><a target="_blank" href="/cruise/view/{{this.Sample__cruise_id}}">{{this.Sample__cruise_name}}</a></td>
             {{#each this.search_values}}
               <td>{{this}}</td>
             {{/each}}
