@@ -1,5 +1,5 @@
 <div class="jumbotron">
-  [% IF errors.size > 0 %]
+  [% IF errors AND errors.size > 0 %]
     <div class="well text-center">
       <b>Error:</b>
       <div class="text-left">

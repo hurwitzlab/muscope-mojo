@@ -32,31 +32,72 @@ sub icon {
 }
 
 # ----------------------------------------------------------------------
-sub launch_app {
-    my $self   = shift;
-    my $app_id = $self->param('app_id') || '';
-    my $status = '';
+sub files {
+    my $self       = shift;
+    my $file_type  = $self->param('file_type');
+    my $schema     = $self->db->schema;
+    my $session    = $self->session;
+    my ($FileType) = $schema->resultset('SampleFileType')->search({
+        type       => $file_type
+    });
 
-    if ($app_id) {
-        my @sample_ids = @{ $self->session->{'items'} || [] };
-        if (my $json = `jobs-template $app_id`) {
-            my $template = decode_json($json);
-            $template->{'inputs'}{'INPUT'} = join ',', @sample_ids;
-            my ($fh, $tmp_file) = tempfile();
-            print $fh encode_json($template);
-            close($fh);
-            $status = `jobs-submit -F $tmp_file`;
-            unlink $tmp_file;
-        }
-        else {
-            $status = "Bad app_id ($app_id)";        
-        }
+    if (!$FileType) {
+        return $self->reply->exception("Bad file_type ($file_type)");
     }
 
-    $self->layout('default');
-    $self->render(
-        app_id => $app_id,
-        status => $status
+    my @files;
+    for my $sample_id (@{ $session->{'items'} || [] }) {
+        push @files, $schema->resultset('SampleFile')->search({
+            sample_id           => $sample_id,
+            sample_file_type_id => $FileType->id,
+        });
+    }
+
+    my $struct = sub {
+        map { 
+            sample_file_id => $_->id, 
+            sample_id      => $_->sample_id, 
+            sample_name    => $_->sample->sample_name,
+            file           => $_->file,
+            type           => $_->sample_file_type->type,
+        },
+        @files;
+    };
+
+    $self->respond_to(
+        json => sub {
+            $self->render( json => [$struct->()] );
+        },
+
+        html => sub {
+            $self->layout('default');
+
+            $self->render(
+                title   => 'View Files',
+                session => $session,
+                files   => \@files,
+            );
+        },
+
+        tab => sub {
+            my $out  = '';
+            my @data = $struct->();
+
+            if (@data && ref $data[0] eq 'HASH') {
+                my @hdr  = sort keys %{ $data[0] };
+                my @out  = join "\t", @hdr;
+                for my $row (@data) {
+                    push @out, join "\t", (map { $row->{$_} } @hdr);
+                }
+                $out = join "\n", @out;
+            }
+
+            $self->render( text => $out );
+        },
+
+        txt => sub {
+            $self->render( text => dump($struct->()) )
+        },
     );
 }
 
@@ -91,29 +132,60 @@ sub view {
     my $session = $self->session;
 
     my @samples;
+    my %file_type;
     for my $sample_id (@{ $session->{'items'} || [] }) {
-        push @samples, $schema->resultset('Sample')->find($sample_id);
+        my $Sample = $schema->resultset('Sample')->find($sample_id);
+        push @samples, $Sample;
+        for my $File ($Sample->sample_files) {
+            $file_type{ $File->sample_file_type->type }++;
+        }
     }
 
+    my $struct = sub {
+        map { 
+            sample_id   => $_->id, 
+            sample_name => $_->sample_name,
+            sample_acc  => $_->sample_name,
+            cruise_id   => $_->cast->station->cruise->id,
+            cruise_name => $_->cast->station->cruise->cruise_name,
+        },
+        @samples;
+    };
 
     $self->respond_to(
         json => sub {
-            $self->render( json => { $session } );
+            $self->render( json => [$struct->()] );
         },
 
         html => sub {
             $self->layout('default');
 
             $self->render(
-                title   => 'session',
-                session => $session,
-                samples => \@samples,
-                app_ids => ['remote-test-0.0.1']
+                title      => 'View Cart',
+                session    => $session,
+                samples    => \@samples,
+                file_types => [sort keys %file_type],
             );
         },
 
+        tab => sub {
+            my $out  = '';
+            my @data = $struct->();
+
+            if (@data && ref $data[0] eq 'HASH') {
+                my @hdr  = sort keys %{ $data[0] };
+                my @out  = join "\t", @hdr;
+                for my $row (@data) {
+                    push @out, join "\t", (map { $row->{$_} } @hdr);
+                }
+                $out = join "\n", @out;
+            }
+
+            $self->render( text => $out );
+        },
+
         txt => sub {
-            $self->render( text => dump($session) )
+            $self->render( text => dump($struct->()) )
         },
     );
 }

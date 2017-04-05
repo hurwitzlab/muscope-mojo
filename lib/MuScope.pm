@@ -30,82 +30,23 @@ sub startup {
     $r->get('/admin/create_investigator_form')->to('admin#create_investigator_form');
 
     $r->post('/admin/create_investigator')->to('admin#create_investigator');
-#
-#    $r->post('/admin/create_project_pub')->to('admin#create_project_pub');
-#
-#    $r->get('/admin/create_project_pub_form/:project_id')->to('admin#create_project_pub_form');
-#
-#    $r->post('/admin/create_publication')->to('admin#create_publication');
-#
-#    $r->get('/admin/create_publication_form')->to('admin#create_publication_form');
-#
-#    $r->get('/admin/create_project_page_form/:project_id')->to('admin#create_project_page_form');
-#
-#    $r->post('/admin/delete_project_page/:project_page_id')->to('admin#delete_project_page');
-#
-#    $r->post('/admin/delete_project_pub/:publication_id')->to('admin#delete_project_pub');
-#
-#    $r->post('/admin/delete_publication/:publication_id')->to('admin#delete_publication');
-#
-#    $r->get('/admin/edit_project_page/:project_page_id')->to('admin#edit_project_pub');
-#
-#    $r->get('/admin/edit_project_publications/:project_id')->to('admin#edit_project_publications');
-#
-#    $r->get('/admin/edit_sample/:sample_id')->to('admin#edit_sample');
-#
-#    $r->post('/admin/update_project_page')->to('admin#update_project_page');
-#
-#    $r->get('/admin/home_publications')->to('admin#home_publications');
-#
-#    $r->get('/admin/edit_project/:project_id')->to('admin#edit_project');
-#
-#    $r->get('/admin/view_project/:project_id')->to('admin#view_project');
-#
-#    $r->get('/admin/view_project_pages/:project_id')->to('admin#view_project_pages');
-#
-#    $r->get('/admin/view_project_samples/:project_id')->to('admin#view_project_samples');
-#
-#    $r->get('/admin/view_publication/:publication_id')->to('admin#view_publication');
-#
-#    $r->post('/admin/update_project')->to('admin#update_project');
-#
-#    $r->post('/admin/update_publication')->to('admin#update_publication');
-#
-#    $r->post('/admin/update_sample')->to('admin#update_sample');
-#
+
     #
     # User endpoints
     #
     $r->get('/')->to('welcome#index');
 
+    $r->get('/download')->to('download#format');
+
+    $r->post('/download/get')->to('download#get');
+
     $r->get('/feedback')->to('feedback#form');
 
-#    $r->get('/assembly/info')->to('assembly#info');
-#
-#    $r->get('/assembly/list')->to('assembly#list');
-#
-#    $r->get('/assembly/view/:assembly_id')->to('assembly#view');
-#
-#    $r->get('/combined_assembly/info')->to('combined_assembly#info');
-#
-#    $r->get('/combined_assembly/list')->to('combined_assembly#list');
-#
-#    $r->get('/combined_assembly/view/:combined_assembly_id')->to('combined_assembly#view');
-#
-#    $r->get('/download')->to('download#format');
-#
-#    $r->post('/download/get')->to('download#get');
-#
+    $r->post('/feedback/submit')->to('feedback#submit');
 
-#    $r->post('/feedback/submit')->to('feedback#submit');
-#
-#    $r->get('/index')->to('welcome#index');
-#
-#    $r->get('/info')->to('welcome#index');
-#
     $r->post('/cart/add')->to('cart#add');
 
-    $r->get('/cart/launch_app')->to('cart#launch_app');
+    $r->get('/cart/files')->to('cart#files');
 
     $r->get('/cart/icon')->to('cart#icon');
 

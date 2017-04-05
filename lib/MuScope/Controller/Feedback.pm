@@ -164,7 +164,8 @@ sub submit {
             %mail_args,
             'title'      => 'Message Received',
             'return_url' => $problem_url,
-            'Message'    => $message
+            'Message'    => $message,
+            'errors'     => [],
         );
     }
 }

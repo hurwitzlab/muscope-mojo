@@ -12,18 +12,23 @@ $(document).ready(function() {
 
 <h1>Cart ([% samples.size OR '0' %])</h1>
 [% IF samples.size > 0 %]
-[% IF app_ids.size > 0 %]
-  <form action="/cart/launch_app">
-  <select name="app_id">
-    <option value="">--Select App--</option>
-    [% FOREACH app_id IN app_ids %]
-      <option value="[% app_id %]">[% app_id %]</option>
-    [% END %]
-  </select>
-  <input type="submit">
+  [% IF file_types.size > 0 %]
+  <form action="/cart/files">
+    <label for="file_type">Get Files:</label>
+    <select name="file_type">
+      <option value="">--Select--</option>
+      [% FOREACH type IN file_types %]
+        <option value="[% type %]">[% type %]</option>
+      [% END %]
+    </select>
+    <input type="submit" class="btn btn-default">
   </form>
-[% END %]
-<span class="pull-right"><a href="/cart/purge"><span class="glyphicon glyphicon-trash" aria-hidden="true"></span></a></span>
+  [% END %]
+
+  <div class="pull-right">
+  <a href="/download?url=/cart/view"><span class="glyphicon glyphicon-download-alt" aria-hidden="true"></span></a>
+  <a href="/cart/purge"><span class="glyphicon glyphicon-trash" aria-hidden="true"></span></a></span>
+  </div>
   <table id="samples-tbl" class="table">
     <thead>
       <tr>
