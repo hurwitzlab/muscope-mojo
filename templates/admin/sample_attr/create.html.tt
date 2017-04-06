@@ -1,0 +1,32 @@
+<h1>Create Sample Attribute</h1>
+
+<form role="form" method="post" action="/admin/sample_attr/insert">
+  <div class="form-group">
+    <label for="sample_name">Sample Name</label><br/>
+    <a href="/admin/sample/edit/[% sample.id %]">[% sample.sample_name %]</a>
+  </div>
+
+  <div class="form-group">
+    <label for="value">Value</label><br/>
+    <input type="text" name="value" id="value" size="60">
+  </div>
+
+  <div class="form-group">
+    <label for="sample_attr_type_id">Type</label><br/>
+    [% IF sample_attr_types.count > 0 %]
+      <select type="text" name="sample_attr_type_id" id="sample_attr_type_id">
+        <option value="">--Select--</option>
+        [% WHILE (type=sample_attr_types.next) %]
+          <option value="[% type.id %]">[% type.type %][% IF type.unit %] ([% type.unit %])[% END %] [[% type.sample_attr_type_category.category %]]</option>
+        [% END %]
+      </select>
+    [% ELSE %]
+      No types.
+    [% END %]
+  </div>
+
+  <div class="text-center form-group">
+    <input type="hidden" name="sample_id" value="[% sample.id %]">
+    <button type="submit" class="btn btn-primary">Submit</button>
+  </div>
+</form>

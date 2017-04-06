@@ -1,0 +1,83 @@
+<script type="text/javascript">
+$(document).ready(function() {
+  var dt_opts = {
+    "lengthMenu": [[10, 25, 50, -1], [10, 25, 50, "All"]],
+    "iDisplayLength": 50,
+    "stateSave": true
+  };
+
+  $('#station-tbl').dataTable(dt_opts);
+});
+</script>
+
+<div class="row">
+  <h1 id="nav-tabs">Edit Cruise: [% cruise.cruise_name %]</h1>
+  <div class="bs-component">
+    <ul class="nav nav-tabs">
+      <li class="active"><a href="#main" data-toggle="tab">Main</a></li>
+      <li><a href="#stations" data-toggle="tab">Stations ([% cruise.stations_rs.count %])</a></li>
+    </ul>
+
+    <div id="tabContent" class="tab-content">
+      <div class="tab-pane fade active in" id="main">
+        <br/>
+        <form role="form" method="post" action="/admin/cruise/update">
+          <div class="form-group">
+            <label for="cruise_name">Cruise Name</label><br/>
+            <input type="text" name="cruise_name" id="cruise_name" size="60" value="[% cruise.cruise_name %]">
+          </div>
+
+          <div class="form-group">
+            <label for="start_date">Start Date</label><br/>
+            <input type="text" name="start_date" id="start_date" size="60" value="[% cruise.start_date %]">
+          </div>
+
+          <div class="form-group">
+            <label for="end_date">End Date</label><br/>
+            <input type="text" name="end_date" id="end_date" size="60" value="[% cruise.end_date %]">
+          </div>
+
+          <div class="text-center form-group">
+            <input type="hidden" name="cruise_id" value="[% cruise.id %]">
+            <button type="submit" class="btn btn-primary">Update</button>
+          </div>
+        </form>
+      </div>
+
+      <div class="tab-pane fade" id="stations">
+        <br/>
+
+        <h2>Stations ([% cruise.stations_rs.count %])</h2>
+        <div class="pull-right">
+        <a href="/admin/station/create/[% cruise.id %]"><span class="glyphicon glyphicon-plus-sign" aria-hidden="true"></span></a>
+        </div>
+        [% IF cruise.stations_rs.count > 0 %]
+          <table class="display" id="station-tbl">
+            <thead>
+              <tr>
+                <th>Station Num</th>
+                <th>Lat</th>
+                <th>Lon</th>
+                <th>Num Casts</th>
+                <th>Edit</th>
+              </tr>
+            </thead>
+            <tbody>
+              [% FOREACH station IN cruise.stations %]
+              <tr>
+                <td>[% station.station_number %]</td>
+                <td align="right">[% station.latitude %]</td>
+                <td align="right">[% station.longitude %]</td>
+                <td align="right">[% station.casts_rs.count %]</td>
+                <td align="center"><a href="/admin/station/edit/[% station.id %]"><span class="glyphicon glyphicon-edit" aria-hidden="true"></span></a></td>
+              </tr>
+              [% END %]
+             </tbody>
+           </table>
+        [% ELSE %]
+          No casts.
+        [% END %]
+      </div>
+    </div>
+  </div>
+</div>

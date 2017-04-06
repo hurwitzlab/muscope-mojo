@@ -1,0 +1,20 @@
+<h1>Create Station</h1>
+
+<div class="row">
+  <form role="form" method="post" action="/admin/station/insert">
+    <div class="form-group">
+      <label for="station_name">Cruise Name</label><br/>
+      <a href="/admin/cruise/edit/[% cruise.id %]">[% cruise.cruise_name %]</a>
+    </div>
+
+    <div class="form-group">
+      <label for="station_number">Station Number</label><br/>
+      <input type="text" name="station_number" id="station_number" size="60">
+    </div>
+
+    <div class="text-center form-group">
+      <input type="hidden" name="cruise_id" value="[% cruise.id %]">
+      <button type="submit" class="btn btn-primary">Submit</button>
+    </div>
+  </form>
+</div>

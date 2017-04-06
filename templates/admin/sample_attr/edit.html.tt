@@ -1,0 +1,44 @@
+<script type="text/javascript">
+$(document).ready(function() {
+  var dt_opts = {
+    "lengthMenu": [[10, 25, 50, -1], [10, 25, 50, "All"]],
+    "iDisplayLength": 50,
+    "stateSave": true
+  };
+
+  $('#attrs-tbl').dataTable(dt_opts);
+});
+</script>
+
+<h1>Edit Sample Attribute</h1>
+
+<form role="form" method="post" action="/admin/sample_attr/update">
+  <div class="form-group">
+    <label for="sample_name">Sample Name</label><br/>
+    <a href="/admin/sample/edit/[% sample_attr.sample.id %]">[% sample_attr.sample.sample_name %]</a>
+  </div>
+
+  <div class="form-group">
+    <label for="value">Value</label><br/>
+    <input type="text" name="value" id="value" size="60" value="[% sample_attr.value %]">
+  </div>
+
+  <div class="form-group">
+    <label for="sample_attr_type_id">Type</label><br/>
+    [% IF sample_attr_types.count > 0 %]
+      <select type="text" name="sample_attr_type_id" id="sample_attr_type_id">
+        <option value="">--Select--</option>
+        [% WHILE (type=sample_attr_types.next) %]
+          <option value="[% type.id %]"[% IF type.id == sample_attr.sample_attr_type_id %] selected[% END %]>[% type.type %][% IF type.unit %] ([% type.unit %])[% END %] [[% type.sample_attr_type_category.category %]]</option>
+        [% END %]
+      </select>
+    [% ELSE %]
+      No types.
+    [% END %]
+  </div>
+
+  <div class="text-center form-group">
+    <input type="hidden" name="sample_attr_id" value="[% sample_attr.id %]">
+    <button type="submit" class="btn btn-primary">Submit</button>
+  </div>
+</form>

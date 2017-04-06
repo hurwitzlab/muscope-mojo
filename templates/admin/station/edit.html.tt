@@ -1,0 +1,87 @@
+<script type="text/javascript">
+$(document).ready(function() {
+  var dt_opts = {
+    "lengthMenu": [[10, 25, 50, -1], [10, 25, 50, "All"]],
+    "iDisplayLength": 50,
+    "stateSave": true
+  };
+
+  $('#cast-tbl').dataTable(dt_opts);
+});
+</script>
+
+<div class="row">
+  <h1 id="nav-tabs">Edit Station: [% station.cruise.cruise_name %] [% station.station_number %]</h1>
+  <div class="bs-component">
+    <ul class="nav nav-tabs">
+      <li class="active"><a href="#main" data-toggle="tab">Main</a></li>
+      <li><a href="#casts" data-toggle="tab">Casts ([% station.casts_rs.count %])</a></li>
+    </ul>
+
+    <div id="tabContent" class="tab-content">
+      <div class="tab-pane fade active in" id="main">
+        <br/>
+        <form role="form" method="post" action="/admin/station/update">
+          <div class="form-group">
+            <label for="station_number">Cruise</label><br/>
+            <a href="/admin/cruise/edit/[% station.cruise_id %]">[% station.cruise.cruise_name %]</a>
+          </div>
+
+          <div class="form-group">
+            <label for="station_number">Station Number</label><br/>
+            <input type="text" name="station_number" id="station_number" size="60" value="[% station.station_number %]">
+          </div>
+
+          <div class="form-group">
+            <label for="latitude">Latitude</label><br/>
+            <input type="text" name="latitude" id="latitude" size="60" value="[% station.latitude %]">
+          </div>
+
+          <div class="form-group">
+            <label for="longitude">Longitude</label><br/>
+            <input type="text" name="longitude" id="longitude" size="60" value="[% station.longitude %]">
+          </div>
+
+          <div class="text-center form-group">
+            <input type="hidden" name="station_id" value="[% station.id %]">
+            <button type="submit" class="btn btn-primary">Update</button>
+          </div>
+        </form>
+      </div>
+
+      <div class="tab-pane fade" id="casts">
+        <br/>
+
+        <h2>Casts ([% station.casts_rs.count %])</h2>
+        <div class="pull-right">
+          <a href="/admin/cast/create/[% station.id %]"><span class="glyphicon glyphicon-plus-sign" aria-hidden="true"></span></a>
+        </div>
+        [% IF station.casts_rs.count > 0 %]
+          <table class="display" id="cast-tbl">
+            <thead>
+              <tr>
+                <th>Cast Num</th>
+                <th>Date</th>
+                <th>Time</th>
+                <th>TZ</th>
+                <th>Edit</th>
+              </tr>
+            </thead>
+            <tbody>
+          [% FOREACH cast IN station.casts %]
+              <tr>
+                <td>[% cast.cast_number %]</td>
+                <td>[% cast.collection_date OR 'NA' %]</td>
+                <td>[% cast.collection_time OR 'NA' %]</td>
+                <td>[% cast.collection_time_zone OR 'NA' %]</td>
+                <td><a href="/admin/cast/edit/[% cast.id %]"><span class="glyphicon glyphicon-edit" aria-hidden="true"></span></a></td>
+              </tr>
+          [% END %]
+          </tbody>
+        [% ELSE %]
+          No casts.
+        [% END %]
+      </div>
+    </div>
+  </div>
+</div>

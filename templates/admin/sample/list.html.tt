@@ -1,0 +1,37 @@
+<script type="text/javascript">
+$(document).ready(function() {
+  $('#cruise-tbl').dataTable({
+    "lengthMenu": [[10, 25, 50, -1], [10, 25, 50, "All"]],
+    "iDisplayLength": 50,
+  });
+});
+</script>
+
+<h1>Cruise List</h1>
+
+[% IF cruises.count > 0 %]
+<table id="cruise-tbl" class="display" cellspacing="0" width="100%">
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Start</th>
+      <th>End</th>
+      <th># Stations</th>
+    </tr>
+  </thead>
+  <tbody>
+    [% WHILE (cruise=cruises.next) %]
+    <tr>
+      <td>
+        <a href="/admin/cruise/edit/[% cruise.id %]">[% cruise.cruise_name %]</a>
+      </td>
+      <td>[% cruise.start_date OR 'NA' %]</td>
+      <td>[% cruise.end_date OR 'NA' %]</td>
+      <td>[% cruise.stations_rs.count OR '0' %]</td>
+    </tr>
+    [% END %]
+  </tbody>
+</table>
+[% ELSE %]
+  No cruises.
+[% END %]

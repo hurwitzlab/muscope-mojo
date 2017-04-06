@@ -21,15 +21,92 @@ sub startup {
     # 
     $r->get('/admin')->to('admin#index');
 
-    $r->get('/admin/list_investigators')->to('admin#list_investigators');
+    #
+    # Cruise
+    #
+    $r->get('/admin/cruise/list')->to('admin-cruise#list');
 
-    $r->get('/admin/edit_investigator/:investigator_id')->to('admin#edit_investigator');
+    $r->get('/admin/cruise/create')->to('admin-cruise#create');
 
-    $r->post('/admin/update_investigator')->to('admin#update_investigator');
+    $r->get('/admin/cruise/edit/:cruise_id')->to('admin-cruise#edit');
 
-    $r->get('/admin/create_investigator_form')->to('admin#create_investigator_form');
+    $r->post('/admin/cruise/insert')->to('admin-cruise#insert');
 
-    $r->post('/admin/create_investigator')->to('admin#create_investigator');
+    $r->post('/admin/cruise/update')->to('admin-cruise#update');
+
+    #
+    # Investigator
+    #
+
+    $r->get('/admin/investigator/list')->to('admin-investigator#list');
+
+    $r->get('/admin/investigator/edit/:investigator_id')->to('admin-investigator#edit');
+
+    $r->post('/admin/investigator/update')->to('admin-investigator#update');
+
+    $r->get('/admin/investigator/create')->to('admin-investigator#create');
+
+    $r->post('/admin/investigator/insert')->to('admin-investigator#insert');
+
+    #
+    # Station
+    #
+    $r->get('/admin/station/create/:cruise_id')->to('admin-station#create');
+
+    $r->get('/admin/station/edit/:station_id')->to('admin-station#edit');
+
+    $r->post('/admin/station/insert')->to('admin-station#insert');
+
+    $r->post('/admin/station/update')->to('admin-station#update');
+
+    #
+    # Cast
+    #
+    $r->get('/admin/cast/create/:station_id')->to('admin-cast#create');
+
+    $r->get('/admin/cast/edit/:cast_id')->to('admin-cast#edit');
+
+    $r->post('/admin/cast/insert')->to('admin-cast#insert');
+
+    $r->post('/admin/cast/update')->to('admin-cast#update');
+
+    #
+    # Sample
+    #
+    $r->get('/admin/sample/create/:cast_id')->to('admin-sample#create');
+
+    $r->get('/admin/sample/edit/:sample_id')->to('admin-sample#edit');
+
+    $r->post('/admin/sample/insert')->to('admin-sample#insert');
+
+    $r->post('/admin/sample/update')->to('admin-sample#update');
+
+    #
+    # Sample Attr
+    #
+    $r->get('/admin/sample_attr/create/:sample_id')->to('admin-sample_attr#create');
+
+    $r->get('/admin/sample_attr/edit/:sample_attr_id')->to('admin-sample_attr#edit');
+
+    $r->post('/admin/sample_attr/insert')->to('admin-sample_attr#insert');
+
+    $r->post('/admin/sample_attr/update')->to('admin-sample_attr#update');
+
+    $r->post('/admin/sample_attr/delete/:sample_attr_id')->to('admin-sample_attr#delete');
+
+    #
+    # Sample File
+    #
+    $r->get('/admin/sample_file/create/:sample_id')->to('admin-sample_file#create');
+
+    $r->get('/admin/sample_file/edit/:sample_file_id')->to('admin-sample_file#edit');
+
+    $r->post('/admin/sample_file/insert')->to('admin-sample_file#insert');
+
+    $r->post('/admin/sample_file/update')->to('admin-sample_file#update');
+
+    $r->post('/admin/sample_file/delete/:sample_file_id')->to('admin-sample_file#delete');
+
 
     #
     # User endpoints

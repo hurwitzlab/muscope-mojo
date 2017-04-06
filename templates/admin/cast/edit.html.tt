@@ -1,0 +1,102 @@
+<script type="text/javascript">
+$(document).ready(function() {
+  var dt_opts = {
+    "lengthMenu": [[10, 25, 50, -1], [10, 25, 50, "All"]],
+    "iDisplayLength": 50,
+    "stateSave": true
+  };
+
+  $('#samples-tbl').dataTable(dt_opts);
+});
+</script>
+
+<div class="row">
+  <h1 id="nav-tabs">Edit Cast: [% cast.station.cruise.cruise_name %] [% cast.station.station_number %] [% cast.cast_number %]</h1>
+  <div class="bs-component">
+    <ul class="nav nav-tabs">
+      <li class="active"><a href="#main" data-toggle="tab">Main</a></li>
+      <li><a href="#samples" data-toggle="tab">Samples ([% cast.samples_rs.count %])</a></li>
+    </ul>
+
+    <div id="tabContent" class="tab-content">
+      <div class="tab-pane fade active in" id="main">
+        <br/>
+
+        <form role="form" method="post" action="/admin/cast/update">
+          <div class="form-group">
+            <label for="cruise">Cruise Name</label><br/>
+            <a href="/admin/cruise/edit/[% cast.station.cruise_id %]">[% cast.station.cruise.cruise_name %]</a>
+          </div>
+
+          <div class="form-group">
+            <label for="station">Station Number</label><br/>
+            <a href="/admin/station/edit/[% cast.station_id %]">[% cast.station.station_number %]</a>
+          </div>
+
+          <div class="form-group">
+            <label for="cast_number">Cast Number</label><br/>
+            <input type="text" number="cast_number" id="cast_number" size="60" value="[% cast.cast_number %]">
+          </div>
+
+          <div class="form-group">
+            <label for="collection_date">Collection Date</label><br/>
+            <input type="text" name="collection_date" id="collection_date" size="60" value="[% cast.collection_date %]">
+          </div>
+
+          <div class="form-group">
+            <label for="collection_time">Collection Time</label><br/>
+            <input type="text" name="collection_time" id="collection_time" size="60" value="[% cast.collection_time %]">
+          </div>
+
+          <div class="form-group">
+            <label for="collection_time_zone">Collection Time Zone</label><br/>
+            <input type="text" name="collection_time_zone" id="collection_time_zone" size="60" value="[% cast.collection_time_zone %]">
+          </div>
+
+          <div class="text-center form-group">
+            <input type="hidden" name="cast_id" value="[% cast.id %]">
+            <button type="submit" class="btn btn-primary">Update</button>
+          </div>
+        </form>
+      </div>
+
+      <div class="tab-pane fade" id="samples">
+        <br/>
+
+        <h2>Samples ([% cast.samples_rs.count %])</h2>
+        <div class="pull-right">
+          <a href="/admin/sample/create/[% cast.id %]"><span class="glyphicon glyphicon-plus-sign" aria-hidden="true"></span></a>
+        </div>
+        [% IF cast.samples_rs.count > 0 %]
+          <table class="display" id="samples-tbl">
+            <thead>
+              <tr>
+                <th>Name</th>
+                <th>Inv</th>
+                <th>Filter</th>
+                <th>Type</th>
+                <th>Seq Meth</th>
+                <th>Library</th>
+                <th>Edit</th>
+              </tr>
+            </thead>
+            <tbody>
+          [% FOREACH sample IN cast.samples %]
+              <tr>
+                <td>[% sample.sample_name %]</td>
+                <td>[% sample.investigator.investigator_name OR 'NA' %]</td>
+                <td>[% sample.filter_type.filter_type OR 'NA' %]</td>
+                <td>[% sample.sample_type.sample_type OR 'NA' %]</td>
+                <td>[% sample.sequencing_method.sequencing_method OR 'NA' %]</td>
+                <td>[% sample.library_kit.library_kit OR 'NA' %]</td>
+                <td><a href="/admin/sample/edit/[% sample.id %]"><span class="glyphicon glyphicon-edit" aria-hidden="true"></span></a></td>
+              </tr>
+          [% END %]
+          </tbody>
+        [% ELSE %]
+          No samples.
+        [% END %]
+      </div>
+    </div>
+  </div>
+</div>
