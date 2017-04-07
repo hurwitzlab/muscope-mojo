@@ -1,0 +1,54 @@
+[% USE Comma %]
+
+<script type="text/javascript">
+$(document).ready(function() {
+  $('#cruise-tbl').dataTable({
+    "lengthMenu": [[10, 25, 50, -1], [10, 25, 50, "All"]],
+    "iDisplayLength": 50,
+  });
+});
+</script>
+
+<h1>Sample Attribute Type List</h1>
+
+[% IF sample_attr_types.count > 0 %]
+<table id="cruise-tbl" class="display" cellspacing="0" width="100%">
+  <thead>
+    <tr>
+      <th>Category</th>
+      <th>Type</th>
+      <th>Aliases</th>
+      <th>Unit</th>
+      <th># Attrs</th>
+      <th>Edit</th>
+    </tr>
+  </thead>
+  <tbody>
+    [% WHILE (type=sample_attr_types.next) %]
+    <tr>
+      <td>
+        <a href="/admin/sample_attr_type_category/edit/[% type.sample_attr_type_category.id %]">[% type.sample_attr_type_category.category %]</a>
+      </td>
+      <td>[% type.type OR 'NA' %]</td>
+      <td>
+        [% SET aliases=[];
+           FOREACH a IN type.sample_attr_type_aliases;
+            aliases.push("<a href=\"/admin/sample_attr_type_alias/view/" _ a.id _ "\">" _ a.alias _ "</a>");
+           END;
+           IF aliases.size > 0; 
+             aliases.join(', ');
+           ELSE;
+             '';
+           END;
+        %]
+      </td>
+      <td>[% type.unit OR 'NA' %]</td>
+      <td align="right">[% type.sample_attrs_rs.count | comma %]</td>
+      <td align="center"><a href="/admin/sample_attr_type/edit/[% type.id %]"><span class="glyphicon glyphicon-edit" aria-hidden="true"></span></a></td>
+    </tr>
+    [% END %]
+  </tbody>
+</table>
+[% ELSE %]
+  No types.
+[% END %]
