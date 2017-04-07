@@ -46,7 +46,7 @@ $(document).ready(function() {
          <td><a href="/cruise/view/[% sample.cast.station.cruise.id %]">[% sample.cast.station.cruise.cruise_name %]</a></td>
          <td><a href="/station/view/[% sample.cast.station.id %]">[% sample.cast.station.station_number %]</a></td>
          <td><a href="/cast/view/[% sample.cast.id %]">[% sample.cast.cast_number %]</a></td>
-         <td><a href="/investigator/view/[% sample.investigator.id %]">[% sample.investigator.investigator_name OR 'NA' %]</a></td>
+         <td><a href="/investigator/view/[% sample.investigator.id %]">[% sample.investigator.last_name %], [% sample.investigator.first_name %]</a></td>
          <td><a href="/sample/view/[% sample.id %]">[% sample.sample_name %]</a></td>
        </tr>
      [% END %]

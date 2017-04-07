@@ -78,7 +78,7 @@ $(document).ready(function() {
                <td><a href="/sample/view/[% sample.id %]">[% sample.sample_name %]</a></td>
                <td>
                  [% IF sample.investigator_id %]
-                   <a href="/investigator/view/[% sample.investigator.id %]">[% sample.investigator.investigator_name %]</a>
+                   <a href="/investigator/view/[% sample.investigator.id %]">[% sample.investigator.first_name %] [% sample.investigator.last_name %]</a>
                  [% ELSE %]
                    NA
                  [% END %]

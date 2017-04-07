@@ -24,9 +24,9 @@ $(document).ready(function() {
       </tr>
     </thead>
     <tbody>
-    [% WHILE (inv = investigators.next) %]
+    [% WHILE (inv=investigators.next) %]
       <tr>
-        <td><a href="/investigator/view/[% inv.id %]">[% inv.investigator_name OR 'NA' %]</a></td>
+        <td><a href="/investigator/view/[% inv.id %]">[% inv.last_name %], [% inv.first_name %]</a></td>
         <td>[% inv.institution OR '&nbsp;' %]</td>
         <td align="right">[% inv.num_cruises OR '0' | comma %]</td>
         <td align="right">[% inv.samples_rs.count OR '0' | comma %]</td>

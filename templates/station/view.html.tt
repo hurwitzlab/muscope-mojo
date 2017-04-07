@@ -82,8 +82,7 @@ $(document).ready(function() {
               [% IF station.cruise.investigators.size > 0 %]
                 <ul>
                 [% FOREACH inv IN station.cruise.investigators %]
-                  <li><a href="/investigator/view/[% inv.id %]">[% inv.investigator_name %] [% IF inv.institution %]([% inv.institution %])[% END %]
-                  </li>
+                  <li><a href="/investigator/view/[% inv.id %]">[% inv.first_name %] [% inv.last_name %] [% IF inv.institution %]([% inv.institution %])[% END %]</a></li>
                 [% END %]
                 </ul>
               [% ELSE %]

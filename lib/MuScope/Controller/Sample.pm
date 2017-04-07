@@ -156,7 +156,7 @@ sub search {
 # ----------------------------------------------------------------------
 sub search_param_values {
     my $self    = shift;
-    my $field   = $self->param('field') or return;
+    my $field   = $self->param('field')   or return;
     my $db      = $self->db;
     my $mongo   = $db->mongo;
     my $mdb     = $mongo->get_database('muscope');
@@ -165,8 +165,14 @@ sub search_param_values {
        key      => $field,
        query    => {}
     ]);
+    my %param_types = map { $_->[0], $_->[1] } $self->_search_params();
+    my $type = %param_types{ $field } || '';
 
-    my @values = $result->{'ok'} ? sort @{ $result->{'values'} } : ();
+    my @values;
+    if ($result->{'ok'}) {
+        my $by  = $type eq 'number' ? sub { $a <=> $b } : sub { $a cmp $b };
+        @values = sort $by @{ $result->{'values'} };
+    }
 
     $self->respond_to(
         json => sub {
@@ -197,10 +203,10 @@ sub _search_params {
     ) {
         my ($name, $type) = @$ref;
         my $unit = '';
-        if ( $name =~ /^ctd__(.+)/ ) {
+        if ( $name =~ /^(?:core|ctd)__(.+)/i ) {
             my $ctd_type = $1;
             $unit = $dbh->selectrow_array(
-                'select unit from ctd_type where ctd_type=?', {}, $ctd_type
+                'select unit from sample_attr_type where type=?', {}, $ctd_type
             );
         }
         push @types, [$name, $type, $unit];
@@ -238,23 +244,24 @@ sub search_results {
     my %search;
     for my $ptype (@param_types) {
         my ($name, $type) = @$ptype;
-        if ($type eq 'string') {
-            if (my @vals = 
-                map { split /\s*,\s*/ } @{ $self->every_param($name) || [] }
-            ) {
-                if (@vals == 1) {
-                    $search{$name} = $vals[0];
-                }
-                else {
-                    $search{$name} = { '$in' => \@vals };
-                }
+        if (my @vals = 
+            map { split /\s*,\s*/ } @{ $self->every_param($name) || [] }
+        ) {
+            if (@vals == 1) {
+                $search{$name} = $vals[0];
+            }
+            else {
+                $search{$name} = { '$in' => \@vals };
             }
         }
         else {
             my $min = $self->param('min_'.$name);
             my $max = $self->param('max_'.$name);
 
-            if (defined $min && defined $max && $min == $max) {
+            next unless (defined $min && $min ne '')
+                     || (defined $max && $max ne '');
+
+            if ($min == $max) {
                 $search{$name}{'$eq'} = $min;
             }
             else {
@@ -279,12 +286,12 @@ sub search_results {
         }
         else {
             @return_fields = (
-                'specimen__cruise_id', 
-                'specimen__cruise_name',
-                'specimen__sample_id',
-                'specimen__sample_name', 
-                'location__latitude', 
-                'location__longitude',
+                'Sample__cruise_id', 
+                'Sample__cruise_name',
+                'Sample__sample_id',
+                'Sample__sample_name', 
+                'Cast__latitude', 
+                'Cast__longitude',
                 @search_params
             );
         }
@@ -293,28 +300,9 @@ sub search_results {
         my $cursor = $coll->find(\%search); #->fields(\%fields);
 
         for my $sample ($cursor->all) {
-            if ($self->param('download')) {
-                my $files = $dbh->selectall_arrayref(
-                    q[
-                        select t.type, f.file
-                        from   sample_file f, sample_file_type t   
-                        where  f.sample_id=?
-                        and    f.sample_file_type_id=t.sample_file_type_id
-                    ],
-                    { Columns => {} },
-                    ($sample->{'specimen__sample_id'})
-                );
-
-                for my $file (@$files) {
-                    (my $type = lc($file->{'type'})) =~ s/\W/_/g;
-                    $sample->{'file__' . $type} = $file->{'file'};
-                }
-            }
-            else {
-                $sample->{'search_values'} = [
-                    map { $sample->{ $_ } } @search_params
-                ];
-            }
+            $sample->{'search_values'} = [
+                map { $sample->{ $_ } } @search_params
+            ];
 
             push @samples, $sample;
         }
@@ -322,9 +310,9 @@ sub search_results {
 
     $self->respond_to(
         json => sub {
-            $self->render( json => { 
-                samples       => \@samples, 
-                search_fields => \@search_params,
+            $self->render( json      => { 
+                samples              => \@samples, 
+                search_fields        => \@search_params,
                 search_fields_pretty => [
                     map { s/__/: /; s/_/ /g; ucfirst($_) } @search_params
                 ],

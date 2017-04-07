@@ -98,7 +98,7 @@ $(document).ready(function() {
           <tr>
             <th>Investigator</th>
             <td>
-              <a href="[% sample.investigator.id %]">[% sample.investigator.investigator_name %]</a>
+              <a href="[% sample.investigator.id %]">[% sample.investigator.first_name %] [% sample.investigator.last_name %]</a>
             </td>
           </tr>
           <tr>

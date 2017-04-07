@@ -102,46 +102,17 @@ use Data::Dump 'dump';
 
 # ----------------------------------------------------------------------
 sub list {
-    my $self   = shift;
-    my $db     = $self->db;
-    my $dbh    = $db->dbh;
-    my $schema = $db->schema;
-
-    my $Cruises = $schema->resultset('Cruise')->search;
-
-#    my @cruises;
-#    for my $Cruise ($schema->resultset('Cruise')->all) {
-#        my $cruise = { $Cruise->get_inflated_columns };
-#        $cruise->{'investigators'} = $dbh->selectall_arrayref(
-#            q[
-#                select distinct i.investigator_id, i.investigator_name
-#                from   investigator i, sample s, cast c, station st
-#                where  st.cruise_id=?
-#                and    st.station_id=c.station_id
-#                and    c.cast_id=s.cast_id
-#                and    s.investigator_id=i.investigator_id
-#            ],
-#            { Columns => {} },
-#            $Cruise->id
-#        );
-#
-#        $cruise->{'num_samples'} = $dbh->selectrow_array(
-#            q[
-#                select count(s.sample_id)
-#                from   sample s, cast c, station st
-#                where  st.cruise_id=?
-#                and    st.station_id=c.station_id
-#                and    c.cast_id=s.cast_id
-#            ],
-#            { Columns => {} },
-#            $Cruise->id
-#        );
-#        push @cruises, $cruise;
-#    }
+    my $self    = shift;
+    my $db      = $self->db;
+    my $dbh     = $db->dbh;
+    my $schema  = $db->schema;
+    my $Cruises = $schema->resultset('Cruise')->search_rs;
 
     $self->respond_to(
         json => sub {
-            $self->render( json => [ map {{$_->get_inflated_columns}} $Cruises ]);
+            $self->render( json => [ 
+               map { $_->get_inflated_columns } $Cruises 
+            ]);
         },
 
         html => sub {
@@ -159,60 +130,6 @@ sub list {
     );
 }
 
-## ----------------------------------------------------------------------
-#sub cruise_file_list {
-#    my $self       = shift;
-#    my $cruise_id = $self->param('cruise_id');
-#    my $schema     = $self->db->schema;
-#    my $Cruise    = $schema->resultset('Cruise')->find($cruise_id) or 
-#        return $self->reply->exception("Bad cruise id ($cruise_id)");
-#
-#    my @files = map { 
-#        { 
-#            type     => $_->cruise_file_type->type, 
-#            location => $_->file,
-#            owner    => 'cruise',    
-#            owner_id => $cruise_id
-#        } 
-#    } $Cruise->cruise_files->all;
-#
-#    for my $Sample ($Cruise->samples) {
-#        push @files, map { 
-#            { 
-#                type     => $_->sample_file_type->type, 
-#                location => $_->file,
-#                owner    => 'sample',
-#                owner_id => $Sample->id,
-#            } 
-#        } $Sample->sample_files->all;
-#    }
-#
-#    $self->respond_to(
-#        json => sub {
-#            $self->render( json => \@files );
-#        },
-#
-#        tab => sub {
-#            my $text = '';
-#
-#            if (@files) {
-#                my @flds = sort keys %{ $files[0] };
-#                my @data = (join "\t", @flds);
-#                for my $file (@files) {
-#                    push @data, join "\t", map { $file->{$_} } @flds;
-#                }
-#                $text = join "\n", @data;
-#            }
-#
-#            $self->render( text => $text );
-#        },
-#
-#        txt => sub {
-#            $self->render( text => dump(\@files) );
-#        },
-#    );
-#}
-#
 # ----------------------------------------------------------------------
 sub view {
     my $self      = shift;

@@ -84,7 +84,7 @@ $(document).ready(function() {
             [% FOREACH sample IN cast.samples %]
               <tr>
                 <td>[% sample.sample_name %]</td>
-                <td>[% sample.investigator.investigator_name OR 'NA' %]</td>
+                <td>[% sample.investigator.last_name OR 'NA' %]</td>
                 <td>[% sample.filter_type.filter_type OR 'NA' %]</td>
                 <td>[% sample.sample_type.sample_type OR 'NA' %]</td>
                 <td>[% sample.sequencing_method.sequencing_method OR 'NA' %]</td>

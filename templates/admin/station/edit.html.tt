@@ -64,6 +64,7 @@ $(document).ready(function() {
                 <th>Date</th>
                 <th>Time</th>
                 <th>TZ</th>
+                <th># Samples</th>
                 <th>Edit</th>
               </tr>
             </thead>
@@ -74,6 +75,7 @@ $(document).ready(function() {
                 <td>[% cast.collection_date OR 'NA' %]</td>
                 <td>[% cast.collection_time OR 'NA' %]</td>
                 <td>[% cast.collection_time_zone OR 'NA' %]</td>
+                <td>[% cast.samples_rs.count %]</td>
                 <td><a href="/admin/cast/edit/[% cast.id %]"><span class="glyphicon glyphicon-edit" aria-hidden="true"></span></a></td>
               </tr>
           [% END %]

@@ -17,17 +17,21 @@ $(document).ready(function() {
       <th>Start</th>
       <th>End</th>
       <th># Stations</th>
+      <th># Casts</th>
+      <th># Samples</th>
+      <th>Edit</th>
     </tr>
   </thead>
   <tbody>
     [% WHILE (cruise=cruises.next) %]
     <tr>
-      <td>
-        <a href="/admin/cruise/edit/[% cruise.id %]">[% cruise.cruise_name %]</a>
-      </td>
+      <td>[% cruise.cruise_name %]</td>
       <td>[% cruise.start_date OR 'NA' %]</td>
       <td>[% cruise.end_date OR 'NA' %]</td>
       <td>[% cruise.stations_rs.count OR '0' %]</td>
+      <td>[% cruise.num_casts OR '0' %]</td>
+      <td>[% cruise.num_samples OR '0' %]</td>
+      <td align="center"><a href="/admin/cruise/edit/[% cruise.id %]"><span class="glyphicon glyphicon-edit" aria-hidden="true"></span></a></td>
     </tr>
     [% END %]
   </tbody>

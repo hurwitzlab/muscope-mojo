@@ -93,8 +93,7 @@ sub view {
             $self->layout('default');
 
             $self->render( 
-                title => 
-                  sprintf('Investigator: %s', $Inv->investigator_name || 'NA'),
+                title        => 'View Investigator',
                 investigator => $Inv,
             );
         },

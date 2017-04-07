@@ -85,7 +85,7 @@ function prettyStr(s) {
 }
 
 // --------------------------------------------------
-function setParamValues(paramName, divId) {
+function setParamValues(paramName, divId, datatype) {
   if (![paramName, divId].every(
         function(v) { return typeof(v) == 'string' && v.length > 0 })
   ) {
@@ -98,7 +98,13 @@ function setParamValues(paramName, divId) {
       html = 'Error getting values for param ' + paramName;
     }
     else {
-      if (data.length > 0 && data.length < 1000) {
+      if (datatype == 'number') {
+        html = '<td>Min: <input name="min_' + paramName 
+             + '" value="' + data[0] + '"/></td>'
+             +  '<td>Max: <input name="max_' + paramName 
+             + '" value="' + data[data.length - 1] + '"/></td>';
+      }
+      else if (data.length > 0 && data.length < 100) {
         html = '<select name="' + paramName + '" multiple>';
         $.each(data, function(idx, val) {
           html += '<option value="' + val + '">' + val + '</option>';
@@ -133,21 +139,13 @@ function addOption(paramName) {
     tr += ' (' + unit + ')'
   }
   tr += '</th>';
-  var valsDivId = '';
 
-  if (type == 'string') {
-    valsDivId = paramName + '_vals';
-    tr  += '<td><div id="' +  valsDivId + '"></div></td></td><td>';
-  }
-  else {
-    tr  += '<td>Min: <input name="min_' + paramName + '"/></td>';
-    tr  += '<td>Max: <input name="max_' + paramName + '"/></td>';
-  }
-
+  var valsDivId = paramName + '_vals';
+  tr += '<td><div id="' +  valsDivId + '"></div></td></td><td>';
   tr += '<td><button type="submit" class="btn btn-primary">Search</button></td><td><button class="btn btn-default" onclick="removeTableRow(this)">Remove</button></td></tr>';
 
   $('#paramTable > tbody:last').append(tr);
-  setParamValues(paramName, valsDivId);
+  setParamValues(paramName, valsDivId, type);
 }
 
 // --------------------------------------------------

@@ -30,7 +30,7 @@ $(document).ready(function() {
       </tr>
     </thead>
     <tbody>
-    [% FOREACH cruise IN cruises.next %]
+    [% WHILE (cruise=cruises.next) %]
       <tr>
         <td><a href="/cruise/view/[% cruise.id %]">[% cruise.cruise_name | truncate(70) %]</a></td>
         <td>
@@ -38,9 +38,9 @@ $(document).ready(function() {
             IF cruise.investigators.size > 0; 
               SET investigators=[]; 
               FOREACH inv IN cruise.investigators;
-                investigators.push("<a href=\"/investigator/view/" _ inv.investigator_id _ "\">" _ inv.investigator_name _ "</a>");
+                investigators.push("<a href=\"/investigator/view/" _ inv.investigator_id _ "\">" _ inv.last_name _ ", " _ inv.first_name _ "</a>");
               END;
-              investigators.join(', ');
+              investigators.join('; ');
             ELSE;
               'NA';
             END;
