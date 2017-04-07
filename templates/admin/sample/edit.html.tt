@@ -140,6 +140,7 @@ $(document).ready(function() {
                 <th>Category</th>
                 <th>Type</th>
                 <th>Value</th>
+                <th>Unit</th>
                 <th>Edit</th>
               </tr>
             </thead>
@@ -149,6 +150,7 @@ $(document).ready(function() {
                 <td>[% attr.sample_attr_type.sample_attr_type_category.category %]</td>
                 <td>[% attr.sample_attr_type.type %]</td>
                 <td>[% attr.value %]</td>
+                <td>[% attr.sample_attr_type.unit OR 'NA' %]</td>
                 <td>
                   <a href="/admin/sample_attr/edit/[% attr.id %]"><span class="glyphicon glyphicon-edit" aria-hidden="true"></span></a>
                   <a href="" onclick="confirmDelete('/admin/sample_attr/delete/[% attr.id %]')"><span class="glyphicon glyphicon-remove-sign" aria-hidden="true"></span></a>

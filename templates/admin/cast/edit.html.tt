@@ -81,7 +81,7 @@ $(document).ready(function() {
               </tr>
             </thead>
             <tbody>
-          [% FOREACH sample IN cast.samples %]
+            [% FOREACH sample IN cast.samples %]
               <tr>
                 <td>[% sample.sample_name %]</td>
                 <td>[% sample.investigator.investigator_name OR 'NA' %]</td>
@@ -91,7 +91,7 @@ $(document).ready(function() {
                 <td>[% sample.library_kit.library_kit OR 'NA' %]</td>
                 <td><a href="/admin/sample/edit/[% sample.id %]"><span class="glyphicon glyphicon-edit" aria-hidden="true"></span></a></td>
               </tr>
-          [% END %]
+            [% END %]
           </tbody>
         [% ELSE %]
           No samples.

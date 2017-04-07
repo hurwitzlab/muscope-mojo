@@ -95,6 +95,19 @@ sub startup {
     $r->post('/admin/sample_attr/delete/:sample_attr_id')->to('admin-sample_attr#delete');
 
     #
+    # Sample Attr Type
+    #
+    $r->get('/admin/sample_attr_type/create')->to('admin-sample_attr_type#create');
+
+    $r->get('/admin/sample_attr_type/edit/:sample_attr_type_id')->to('admin-sample_attr_type#edit');
+
+    $r->get('/admin/sample_attr_type/list')->to('admin-sample_attr_type#list');
+
+    $r->post('/admin/sample_attr_type/insert')->to('admin-sample_attr_type#insert');
+
+    $r->post('/admin/sample_attr_type/update')->to('admin-sample_attr_type#update');
+
+    #
     # Sample File
     #
     $r->get('/admin/sample_file/create/:sample_id')->to('admin-sample_file#create');
@@ -106,7 +119,6 @@ sub startup {
     $r->post('/admin/sample_file/update')->to('admin-sample_file#update');
 
     $r->post('/admin/sample_file/delete/:sample_file_id')->to('admin-sample_file#delete');
-
 
     #
     # User endpoints
