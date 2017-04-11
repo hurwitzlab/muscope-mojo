@@ -57,7 +57,7 @@ sub update {
     my $Sample    = $self->db->schema->resultset('Sample')->find($sample_id)
                     or die "Bad sample id ($sample_id)\n";
 
-    my @flds = qw[sample_number seq_name sequence_type filter_type_id
+    my @flds = qw[sample_number seq_name filter_type_id
         sample_type_id investigator_id sequencing_method_id
         library_kit_id];
 

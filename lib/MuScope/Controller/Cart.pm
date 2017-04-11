@@ -33,16 +33,19 @@ sub icon {
 
 # ----------------------------------------------------------------------
 sub files {
-    my $self       = shift;
-    my $file_type  = $self->param('file_type');
-    my $schema     = $self->db->schema;
-    my $session    = $self->session;
-    my ($FileType) = $schema->resultset('SampleFileType')->search({
-        type       => $file_type
-    });
+    my $self    = shift;
+    my $schema  = $self->db->schema;
+    my $session = $self->session;
 
-    if (!$FileType) {
-        return $self->reply->exception("Bad file_type ($file_type)");
+    my $FileType;
+    if (my $type_id = $self->param('file_type_id')) {
+        ($FileType) = $schema->resultset('SampleFileType')->find($type_id)
+          or return $self->reply->exception("Bad file_type ($type_id)");
+    }
+    elsif (my $file_type = $self->param('file_type')) {
+        ($FileType) = $schema->resultset('SampleFileType')->search({
+            type    => $file_type
+        }) or return $self->reply->exception("Bad file_type ($file_type)");
     }
 
     my @files;
@@ -54,14 +57,20 @@ sub files {
     }
 
     my $struct = sub {
-        map { 
-            sample_file_id => $_->id, 
-            sample_id      => $_->sample_id, 
-            sample_name    => $_->sample->sample_name,
-            file           => $_->file,
-            type           => $_->sample_file_type->type,
-        },
-        @files;
+        if ($self->param('file_list')) {
+            map { s{^/iplant/home/}{agave://data.iplantcollaborative.org/}; $_ }
+            map { $_->file } @files;
+        }
+        else {
+            map { 
+                sample_file_id => $_->id, 
+                sample_id      => $_->sample_id, 
+                sample_name    => $_->sample->sample_name,
+                file           => $_->file,
+                type           => $_->sample_file_type->type,
+            },
+            @files;
+        }
     };
 
     $self->respond_to(
@@ -96,7 +105,7 @@ sub files {
         },
 
         txt => sub {
-            $self->render( text => dump($struct->()) )
+            $self->render( text => join ';', $struct->())
         },
     );
 }
@@ -132,14 +141,17 @@ sub view {
     my $session = $self->session;
 
     my @samples;
-    my %file_type;
+    my %file_type_id;
     for my $sample_id (@{ $session->{'items'} || [] }) {
         my $Sample = $schema->resultset('Sample')->find($sample_id);
         push @samples, $Sample;
         for my $File ($Sample->sample_files) {
-            $file_type{ $File->sample_file_type->type }++;
+            $file_type_id{ $File->sample_file_type->id }++;
         }
     }
+
+    my @FileTypes = map $schema->resultset('SampleFileType')->find($_),
+                    keys %file_type_id;
 
     my $struct = sub {
         map { 
@@ -164,7 +176,7 @@ sub view {
                 title      => 'View Cart',
                 session    => $session,
                 samples    => \@samples,
-                file_types => [sort keys %file_type],
+                file_types => \@FileTypes,
             );
         },
 

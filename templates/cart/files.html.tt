@@ -1,19 +1,31 @@
 <script type="text/javascript">
-$(document).ready(function() {
-  var dt_opts = {
-    "lengthMenu": [[10, 25, 50, -1], [10, 25, 50, "All"]],
-    "iDisplayLength": 50,
-    "stateSave": true
-  };
 
-  //$('#samples-tbl').dataTable(dt_opts);
+var files = "";
+$(document).ready(function() {
+  $.get(
+    '[% c.req.url.path %].txt?[% c.req.url.clone.query(file_list = 1).query %]',
+    function (data) {
+      files = data;
+    }
+  );
 });
+
+function copy() {
+  console.log('files = ', JSON.stringify(files));
+  var clipboard = new Clipboard('.btn', {
+    text: function() { return files }
+  });
+  alert('Files copied. Use CTRL-V to paste');
+}
 </script>
 
 <h1>Files ([% files.size OR '0' %])</h1>
 [% IF files.size > 0 %]
   <div class="pull-right">
-  <a href="/download?url=[% c.req.url %]"><span class="glyphicon glyphicon-download-alt" aria-hidden="true"></span></a>
+  <a alt="Download" href="/download?url=[% c.req.url %]"><span class="glyphicon glyphicon-download-alt" aria-hidden="true"></span></a>
+  <button type="button" class="btn btn-default"  aria-label="Copy To Clipboard" onclick="copy()">
+    <span class="glyphicon glyphicon-copy" aria-hidden="true"></span>
+  </button>
   </div>
   <table id="samples-tbl" class="table">
     <thead>
@@ -33,6 +45,8 @@ $(document).ready(function() {
     [% END %]
     </tbody>
   </table>
+
+  <div id="files-list"></div>
 [% ELSE %]
   No files.
 [% END %]

@@ -1,42 +1,125 @@
-<h1>Edit Investigator</h1>
+[% USE Comma %]
+
+<script type="text/javascript">
+$(document).ready(function() {
+  var dt_opts = {
+    "lengthMenu": [[10, 25, 50, -1], [10, 25, 50, "All"]],
+    "iDisplayLength": 50,
+    "stateSave": true
+  };
+
+  $('#cruise-tbl').dataTable(dt_opts);
+  $('#samples-tbl').dataTable(dt_opts);
+});
+</script>
 
 <div class="row">
-  <h3>Edit Investigator</h3>
-  <form role="form" method="post" action="/admin/investigator/update">
-    <div class="form-group">
-      <label for="first_name">First Name</label>
-      <input type="text" class="form-control" id="first_name" name="first_name" value="[% investigator.first_name %]">
-    </div>
+  <h1 id="nav-tabs">Edit Investigator: [% investigator.first_name %] [% investigator.last_name %]</h1>
+  <div class="bs-component">
+    <ul class="nav nav-tabs">
+      <li class="active"><a href="#main" data-toggle="tab">Main</a></li>
+      <li><a href="#samples" data-toggle="tab">Samples ([% investigator.samples_rs.count %])</a></li>
+      <li><a href="#cruises" data-toggle="tab">Cruises ([% investigator.num_cruises %])</a></li>
+    </ul>
 
-    <div class="form-group">
-      <label for="last_name">Last Name</label>
-      <input type="text" class="form-control" id="last_name" name="last_name" value="[% investigator.last_name %]">
-    </div>
+    <div id="tabContent" class="tab-content">
+      <div class="tab-pane fade active in" id="main">
+        <br/>
 
-    <div class="form-group">
-      <label for="pi">Institution</label>
-      <input type="text" class="form-control" id="institution" name="institution" value="[% investigator.institution %]">
-    </div>
+        <form role="form" method="post" action="/admin/investigator/update">
+          <div class="form-group">
+            <label for="first_name">First Name</label>
+            <input type="text" class="form-control" id="first_name" name="first_name" value="[% investigator.first_name %]">
+          </div>
 
-    <div class="form-group">
-      <label for="institution">Website</label>
-      <input type="text" class="form-control" id="website" name="website" value="[% investigator.website %]">
-    </div>
+          <div class="form-group">
+            <label for="last_name">Last Name</label>
+            <input type="text" class="form-control" id="last_name" name="last_name" value="[% investigator.last_name %]">
+          </div>
 
-    <div class="form-group">
-      <label for="description">Project</label>
-      <textarea id="project" name="project" class="form-control" rows="10">[% investigator.project %]</textarea>
-    </div>
+          <div class="form-group">
+            <label for="pi">Institution</label>
+            <input type="text" class="form-control" id="institution" name="institution" value="[% investigator.institution %]">
+          </div>
 
-    <div class="form-group">
-      <label for="description">Bio</label>
-      <textarea id="bio" name="bio" class="form-control" rows="10">[% investigator.bio %]</textarea>
-    </div>
+          <div class="form-group">
+            <label for="institution">Website</label>
+            <input type="text" class="form-control" id="website" name="website" value="[% investigator.website %]">
+          </div>
 
-    <div class="text-center form-group">
-      <input type="hidden" name="investigator_id" value="[% investigator.id %]">
-      <button type="submit" class="btn btn-primary">Submit</button>
-      <br/>
+          <div class="form-group">
+            <label for="description">Project</label>
+            <textarea id="project" name="project" class="form-control" rows="10">[% investigator.project %]</textarea>
+          </div>
+
+          <div class="form-group">
+            <label for="description">Bio</label>
+            <textarea id="bio" name="bio" class="form-control" rows="10">[% investigator.bio %]</textarea>
+          </div>
+
+          <div class="text-center form-group">
+            <input type="hidden" name="investigator_id" value="[% investigator.id %]">
+            <button type="submit" class="btn btn-primary">Submit</button>
+            <br/>
+          </div>
+        </form>
+      </div>
+
+      <div class="tab-pane fade" id="samples">
+        <br/>
+
+        <h2>Samples ([% investigator.samples_rs.count %])</h2>
+        [% IF investigator.samples_rs.count > 0 %]
+          <table class="display" id="samples-tbl">
+            <thead>
+              <tr>
+                <th>Cruise</th>
+                <th>Station</th>
+                <th>Cast</th>
+                <th>Name</th>
+              </tr>
+            </thead>
+            <tbody>
+              [% FOREACH sample IN investigator.samples %]
+              <tr>
+                <td><a href="/admin/cruise/edit/[% sample.cast.station.cruise.id %]">[% sample.cast.station.cruise.cruise_name %]</a></td>
+                <td><a href="/admin/station/edit/[% sample.cast.station.id %]">[% sample.cast.station.station_number %]</a></td>
+                <td><a href="/admin/cast/edit/[% sample.cast.id %]">[% sample.cast.cast_number %]</a></td>
+                <td><a href="/admin/sample/edit/[% sample.id %]">[% sample.sample_name %]</a></td>
+              </tr>
+              [% END %]
+             </tbody>
+           </table>
+        [% ELSE %]
+          No samples.
+        [% END %]
+      </div>
+
+      <div class="tab-pane fade" id="cruises">
+        <br/>
+
+        <h2>Cruises ([% investigator.num_cruises %])</h2>
+        [% IF investigator.num_cruises > 0 %]
+          <table class="display" id="cruise-tbl">
+            <thead>
+              <tr>
+                <th>Cruise</th>
+                <th># Samples</th>
+              </tr>
+            </thead>
+            <tbody>
+              [% FOREACH cruise IN investigator.cruises %]
+              <tr>
+                <td><a href="/admin/cruise/edit/[% cruise.id %]">[% cruise.cruise_name %]</a></td>
+                <td align="right">[% cruise.num_samples | comma %]</td>
+              </tr>
+              [% END %]
+             </tbody>
+           </table>
+        [% ELSE %]
+          No cruises.
+        [% END %]
+      </div>
     </div>
-  </form>
+  </div>
 </div>

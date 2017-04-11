@@ -1,3 +1,4 @@
+[% USE Comma %]
 <script type="text/javascript">
 $(document).ready(function() {
   var dt_opts = {
@@ -6,6 +7,8 @@ $(document).ready(function() {
     "stateSave": true
   };
 
+  $('#samples-tbl').dataTable(dt_opts);
+  $('#casts-tbl').dataTable(dt_opts);
   $('#station-tbl').dataTable(dt_opts);
 });
 </script>
@@ -16,6 +19,8 @@ $(document).ready(function() {
     <ul class="nav nav-tabs">
       <li class="active"><a href="#main" data-toggle="tab">Main</a></li>
       <li><a href="#stations" data-toggle="tab">Stations ([% cruise.stations_rs.count %])</a></li>
+      <li><a href="#casts" data-toggle="tab">Casts ([% cruise.num_casts %])</a></li>
+      <li><a href="#samples" data-toggle="tab">Samples ([% cruise.num_samples %])</a></li>
     </ul>
 
     <div id="tabContent" class="tab-content">
@@ -75,7 +80,71 @@ $(document).ready(function() {
              </tbody>
            </table>
         [% ELSE %]
-          No casts.
+          No stations.
+        [% END %]
+      </div>
+
+      <div class="tab-pane fade" id="casts">
+        <br/>
+
+        <h2>Casts ([% cruise.num_casts %])</h2>
+        [% IF cruise.num_casts > 0 %]
+          <table class="display" id="casts-tbl">
+            <thead>
+              <tr>
+                <th>Station Num</th>
+                <th>Lat</th>
+                <th>Lon</th>
+                <th>Cast</th>
+                <th># Samples</th>
+                <th>Edit</th>
+              </tr>
+            </thead>
+            <tbody>
+              [% FOREACH cast IN cruise.casts %]
+              <tr>
+                <td>[% cast.station.station_number %]</td>
+                <td align="right">[% cast.station.latitude %]</td>
+                <td align="right">[% cast.station.longitude %]</td>
+                <td align="right">[% cast.cast_number %]</td>
+                <td align="right">[% cast.samples_rs.count | comma %]</td>
+                <td align="center"><a href="/admin/cast/edit/[% cast.id %]"><span class="glyphicon glyphicon-edit" aria-hidden="true"></span></a></td>
+              </tr>
+              [% END %]
+             </tbody>
+           </table>
+        [% ELSE %]
+          No stations.
+        [% END %]
+      </div>
+
+      <div class="tab-pane fade" id="samples">
+        <br/>
+
+        <h2>Samples ([% cruise.num_samples %])</h2>
+        [% IF cruise.num_samples > 0 %]
+          <table class="display" id="samples-tbl">
+            <thead>
+              <tr>
+                <th>Cruise</th>
+                <th>Station</th>
+                <th>Cast</th>
+                <th>Name</th>
+              </tr>
+            </thead>
+            <tbody>
+              [% FOREACH sample IN cruise.samples %]
+              <tr>
+                <td><a href="/admin/cruise/edit/[% sample.cast.station.cruise.id %]">[% sample.cast.station.cruise.cruise_name %]</a></td>
+                <td><a href="/admin/station/edit/[% sample.cast.station.id %]">[% sample.cast.station.station_number %]</a></td>
+                <td><a href="/admin/cast/edit/[% sample.cast.id %]">[% sample.cast.cast_number %]</a></td>
+                <td><a href="/admin/sample/edit/[% sample.id %]">[% sample.sample_name %]</a></td>
+              </tr>
+              [% END %]
+             </tbody>
+           </table>
+        [% ELSE %]
+          No samples.
         [% END %]
       </div>
     </div>

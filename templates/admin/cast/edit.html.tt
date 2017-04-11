@@ -11,7 +11,7 @@ $(document).ready(function() {
 </script>
 
 <div class="row">
-  <h1 id="nav-tabs">Edit Cast: [% cast.station.cruise.cruise_name %] [% cast.station.station_number %] [% cast.cast_number %]</h1>
+  <h1 id="nav-tabs">Edit: Cruise &quot;[% cast.station.cruise.cruise_name %]&quot; Station &quot;[% cast.station.station_number %]&quot; Cast &quot;[% cast.cast_number %]&quot;</h1>
   <div class="bs-component">
     <ul class="nav nav-tabs">
       <li class="active"><a href="#main" data-toggle="tab">Main</a></li>
@@ -84,7 +84,7 @@ $(document).ready(function() {
             [% FOREACH sample IN cast.samples %]
               <tr>
                 <td>[% sample.sample_name %]</td>
-                <td>[% sample.investigator.last_name OR 'NA' %]</td>
+                <td><a href="/admin/investigator/edit/[% sample.investigator.id %]">[% sample.investigator.last_name OR 'NA' %]</a></td>
                 <td>[% sample.filter_type.filter_type OR 'NA' %]</td>
                 <td>[% sample.sample_type.sample_type OR 'NA' %]</td>
                 <td>[% sample.sequencing_method.sequencing_method OR 'NA' %]</td>

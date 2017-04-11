@@ -108,6 +108,19 @@ sub startup {
     $r->post('/admin/sample_attr_type/update')->to('admin-sample_attr_type#update');
 
     #
+    # Sample Attr Type Alias
+    #
+    $r->get('/admin/sample_attr_type_alias/create/:sample_attr_type_id')->to('admin-sample_attr_type_alias#create');
+
+    $r->get('/admin/sample_attr_type_alias/edit/:sample_attr_type_alias_id')->to('admin-sample_attr_type_alias#edit');
+
+    $r->post('/admin/sample_attr_type_alias/insert')->to('admin-sample_attr_type_alias#insert');
+
+    $r->post('/admin/sample_attr_type_alias/update')->to('admin-sample_attr_type_alias#update');
+
+    $r->post('/admin/sample_attr_type_alias/delete/:sample_attr_type_alias_id')->to('admin-sample_attr_type_alias#delete');
+
+    #
     # Sample File
     #
     $r->get('/admin/sample_file/create/:sample_id')->to('admin-sample_file#create');
@@ -135,6 +148,8 @@ sub startup {
 
     $r->post('/cart/add')->to('cart#add');
 
+    $r->get('/cart/files/:file_type_id')->to('cart#files');
+
     $r->get('/cart/files')->to('cart#files');
 
     $r->get('/cart/icon')->to('cart#icon');
@@ -145,15 +160,7 @@ sub startup {
 
     $r->get('/cart/view')->to('cart#view');
 
-    $r->get('/library_kit/view/:library_kit_id')->to('library_kit#view');
-
-    $r->get('/filter_type/view/:filter_type_id')->to('filter_type#view');
-
-    $r->get('/sequencing_method/view/:sequencing_method_id')->to('sequencing_method#view');
-
-    $r->get('/investigator/list')->to('investigator#list');
-
-    $r->get('/investigator/view/:investigator_id')->to('investigator#view');
+    $r->get('/cast/view/:cast_id')->to('cast#view');
 
     $r->get('/cruise/list')->to('cruise#list');
 
@@ -163,11 +170,13 @@ sub startup {
 
     $r->get('/cruise/view/:cruise_id')->to('cruise#view');
 
-    $r->get('/station/list/:cruise_id')->to('station#list');
+    $r->get('/filter_type/view/:filter_type_id')->to('filter_type#view');
 
-    $r->get('/station/view/:station_id')->to('station#view');
+    $r->get('/investigator/list')->to('investigator#list');
 
-    $r->get('/cast/view/:cast_id')->to('cast#view');
+    $r->get('/investigator/view/:investigator_id')->to('investigator#view');
+
+    $r->get('/library_kit/view/:library_kit_id')->to('library_kit#view');
 
     $r->get('/sample/info')->to('sample#info');
 
@@ -191,9 +200,17 @@ sub startup {
 
     $r->get('/sample/view/:sample_id')->to('sample#view');
 
+    $r->get('/sample_type/view/:sample_type_id')->to('sample_type#view');
+
     $r->get('/search')->to('search#results');
 
     $r->get('/search/info')->to('search#info');
+
+    $r->get('/sequencing_method/view/:sequencing_method_id')->to('sequencing_method#view');
+
+    $r->get('/station/list/:cruise_id')->to('station#list');
+
+    $r->get('/station/view/:station_id')->to('station#view');
 
     $self->hook(
         before_render => sub {

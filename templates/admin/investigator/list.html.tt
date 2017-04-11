@@ -1,3 +1,4 @@
+[% USE Comma %]
 <script type="text/javascript">
 $(document).ready(function() {
   $('#investigators-tbl').dataTable({
@@ -16,18 +17,18 @@ $(document).ready(function() {
       <th>Last Name</th>
       <th>First Name</th>
       <th># Cruises</th>
+      <th># Samples</th>
+      <th>Edit</th>
     </tr>
   </thead>
   <tbody>
     [% WHILE (investigator=investigators.next) %]
     <tr>
-      <td>
-        <a href="/admin/investigator/edit/[% investigator.id %]">[% investigator.last_name %]</a>
-      </td>
-      <td>
-        <a href="/admin/investigator/edit/[% investigator.id %]">[% investigator.first_name %]</a>
-      </td>
-      <td>[% investigator.num_cruises %]</td>
+      <td>[% investigator.last_name %]</td>
+      <td>[% investigator.first_name %]</td>
+      <td align="right">[% investigator.num_cruises | comma %]</td>
+      <td align="right">[% investigator.samples_rs.count | comma %]</td>
+      <td><a href="/admin/investigator/edit/[% investigator.id %]"><span class="glyphicon glyphicon-edit" aria-hidden="true"></span></a></td>
     </tr>
     [% END %]
   </tbody>

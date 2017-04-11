@@ -17,6 +17,7 @@ $(document).ready(function() {
     <tr>
       <th>Category</th>
       <th>Type</th>
+      <th>Aliases</th>
       <th>Unit</th>
       <th># Attrs</th>
       <th>Edit</th>
@@ -29,6 +30,18 @@ $(document).ready(function() {
         <a href="/admin/sample_attr_type_category/edit/[% type.sample_attr_type_category.id %]">[% type.sample_attr_type_category.category %]</a>
       </td>
       <td>[% type.type OR 'NA' %]</td>
+      <td>
+        [% SET aliases=[];
+           FOREACH a IN type.sample_attr_type_aliases;
+            aliases.push("<a href=\"/admin/sample_attr_type_alias/view/" _ a.id _ "\">" _ a.alias _ "</a>");
+           END;
+           IF aliases.size > 0; 
+             aliases.join(', ');
+           ELSE;
+             '';
+           END;
+        %]
+      </td>
       <td>[% type.unit OR 'NA' %]</td>
       <td align="right">[% type.sample_attrs_rs.count | comma %]</td>
       <td align="center"><a href="/admin/sample_attr_type/edit/[% type.id %]"><span class="glyphicon glyphicon-edit" aria-hidden="true"></span></a></td>

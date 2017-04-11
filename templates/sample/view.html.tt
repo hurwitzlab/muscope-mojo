@@ -92,13 +92,19 @@ $(document).ready(function() {
             <td>[% sample.seq_name %]</td>
           </tr>
           <tr>
-            <th>Sequence Type</th>
-            <td>[% sample.sequence_type OR 'NA' %]</td>
+            <th>Sample Type</th>
+            <td>
+              [% IF sample.sample_type %]
+                <a href="/sample_type/view/[% sample.sample_type_id %]">[% sample.sample_type.sample_type %]</a>
+              [% ELSE %]
+                NA
+              [% END %]
+            </td>
           </tr>
           <tr>
             <th>Investigator</th>
             <td>
-              <a href="[% sample.investigator.id %]">[% sample.investigator.first_name %] [% sample.investigator.last_name %]</a>
+              <a href="/investigator/view/[% sample.investigator.id %]">[% sample.investigator.first_name %] [% sample.investigator.last_name %]</a>
             </td>
           </tr>
           <tr>
@@ -110,7 +116,7 @@ $(document).ready(function() {
           <tr>
             <th>Station</th>
             <td>
-              <a href="/station/view/[% sample.cast.station.id %]">[% sample.cast.station.station_number %]</a> ([% sample.cast.station.longitude %], [% sample.cast.station.latitude %])
+              <a href="/station/view/[% sample.cast.station.id %]">[% sample.cast.station.station_number %]</a>[% IF sample.cast.station.latitude AND sample.cast.station.longitude %] ([% sample.cast.station.longitude %], [% sample.cast.station.latitude %])[% END %]
             </td>
           </tr>
           <tr>

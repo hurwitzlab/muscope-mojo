@@ -37,6 +37,7 @@ $(document).ready(function() {
        <th>Cast</th>
        <th>Investigator</th>
        <th>Sample</th>
+       <th>Type</th>
      </tr>
      </thead>
 
@@ -48,6 +49,7 @@ $(document).ready(function() {
          <td><a href="/cast/view/[% sample.cast.id %]">[% sample.cast.cast_number %]</a></td>
          <td><a href="/investigator/view/[% sample.investigator.id %]">[% sample.investigator.last_name %], [% sample.investigator.first_name %]</a></td>
          <td><a href="/sample/view/[% sample.id %]">[% sample.sample_name %]</a></td>
+         <td><a href="/sample_type/view/[% sample.sample_type_id %]">[% sample.sample_type.sample_type %]</a></td>
        </tr>
      [% END %]
      </tbody>

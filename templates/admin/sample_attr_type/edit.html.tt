@@ -7,38 +7,116 @@ $(document).ready(function() {
   };
 
   $('#attrs-tbl').dataTable(dt_opts);
+  $('#alias-tbl').dataTable(dt_opts);
+  $('#attr-tbl').dataTable(dt_opts);
 });
 </script>
 
-<h1>Edit Sample Attribute Type</h1>
+<div class="row">
+  <h1 id="nav-tabs">Edit Sample Attribute Type</h1>
+  <div class="bs-component">
+    <ul class="nav nav-tabs">
+      <li class="active"><a href="#main" data-toggle="tab">Main</a></li>
+      <li><a href="#aliases" data-toggle="tab">Aliases ([% sample_attr_type.sample_attr_type_aliases_rs.count %])</a></li>
+      <li><a href="#attrs" data-toggle="tab">Attributes ([% sample_attr_type.sample_attrs_rs.count %])</a></li>
+    </ul>
 
-<form role="form" method="post" action="/admin/sample_attr_type/update">
-  <div class="form-group">
-    <label for="type">Type</label><br/>
-    <input type="text" name="type" id="type" size="60" value="[% sample_attr_type.type %]">
-  </div>
+    <div id="tabContent" class="tab-content">
+      <div class="tab-pane fade active in" id="main">
+        <br/>
 
-  <div class="form-group">
-    <label for="unit">Unit</label><br/>
-    <input type="text" name="unit" id="unit" size="60" value="[% sample_attr_type.unit %]">
-  </div>
+        <form role="form" method="post" action="/admin/sample_attr_type/update">
+          <div class="form-group">
+            <label for="type">Type</label><br/>
+            <input type="text" name="type" id="type" size="60" value="[% sample_attr_type.type %]">
+          </div>
 
-  <div class="form-group">
-    <label for="sample_attr_type_id">Category</label><br/>
-    [% IF sample_attr_type_categories.count > 0 %]
-      <select type="text" name="sample_attr_type_category_id" id="sample_attr_type_category_id">
-        <option value="">--Select--</option>
-        [% WHILE (cat=sample_attr_type_categories.next) %]
-          <option value="[% cat.id %]"[% IF cat.id == sample_attr_type.sample_attr_type_category_id %] selected[% END %]>[% cat.category %]</option>
+          <div class="form-group">
+            <label for="unit">Unit</label><br/>
+            <input type="text" name="unit" id="unit" size="60" value="[% sample_attr_type.unit %]">
+          </div>
+
+          <div class="form-group">
+            <label for="sample_attr_type_id">Category</label><br/>
+            [% IF sample_attr_type_categories.count > 0 %]
+              <select type="text" name="sample_attr_type_category_id" id="sample_attr_type_category_id">
+                <option value="">--Select--</option>
+                [% WHILE (cat=sample_attr_type_categories.next) %]
+                  <option value="[% cat.id %]"[% IF cat.id == sample_attr_type.sample_attr_type_category_id %] selected[% END %]>[% cat.category %]</option>
+                [% END %]
+              </select>
+            [% ELSE %]
+              No categories.
+            [% END %]
+          </div>
+
+          <div class="text-center form-group">
+            <input type="hidden" name="sample_attr_type_id" value="[% sample_attr_type.id %]">
+            <button type="submit" class="btn btn-primary">Submit</button>
+          </div>
+        </form>
+      </div>
+
+      <div class="tab-pane fade" id="aliases">
+        <br/>
+        <h2>Aliases ([% sample_attr_type.sample_attr_type_aliases_rs.count %])</h2>
+        <div class="pull-right">
+        <a href="/admin/sample_attr_type_alias/create/[% sample_attr_type.id %]"><span class="glyphicon glyphicon-plus-sign" aria-hidden="true"></span></a>
+        </div>
+        [% IF sample_attr_type.sample_attr_type_aliases_rs.count > 0 %]
+          <table class="display" id="alias-tbl">
+            <thead>
+              <tr>
+                <th>Alias</th>
+                <th>Edit</th>
+              </tr>
+            </thead>
+            <tbody>
+              [% FOREACH alias IN sample_attr_type.sample_attr_type_aliases %]
+              <tr>
+                <td>[% alias.alias %]</td>
+                <td align="center">
+                  <a href="/admin/sample_attr_type_alias/edit/[% alias.id %]"><span class="glyphicon glyphicon-edit" aria-hidden="true"></span></a>
+                  <a href="" onclick="confirmDelete('/admin/sample_attr_type_alias/delete/[% alias.id %]')"><span class="glyphicon glyphicon-remove-sign" aria-hidden="true"></span></a>
+                </td>
+              </tr>
+              [% END %]
+             </tbody>
+           </table>
+        [% ELSE %]
+          No aliases.
         [% END %]
-      </select>
-    [% ELSE %]
-      No categories.
-    [% END %]
-  </div>
+      </div>
 
-  <div class="text-center form-group">
-    <input type="hidden" name="sample_attr_type_id" value="[% sample_attr_type.id %]">
-    <button type="submit" class="btn btn-primary">Submit</button>
+      <div class="tab-pane fade" id="attrs">
+        <br/>
+        <h2>Sample Attributes ([% sample_attr_type.sample_attrs_rs.count %])</h2>
+        [% IF sample_attr_type.sample_attrs_rs.count > 0 %]
+          <table class="display" id="attr-tbl">
+            <thead>
+              <tr>
+                <th>Sample</th>
+                <th>Value</th>
+                <th>Edit</th>
+              </tr>
+            </thead>
+            <tbody>
+              [% FOREACH attr IN sample_attr_type.sample_attrs %]
+              <tr>
+                <td>[% attr.sample.sample_name %]</td>
+                <td>[% attr.value %]</td>
+                <td align="center">
+                  <a href="/admin/sample_attr/edit/[% attr.id %]"><span class="glyphicon glyphicon-edit" aria-hidden="true"></span></a>
+                  <a href="" onclick="confirmDelete('/admin/sample_attr/delete/[% attr.id %]')"><span class="glyphicon glyphicon-remove-sign" aria-hidden="true"></span></a>
+                </td>
+              </tr>
+              [% END %]
+             </tbody>
+           </table>
+        [% ELSE %]
+          No attributes.
+        [% END %]
+      </div>
+    </div>
   </div>
-</form>
+</div>

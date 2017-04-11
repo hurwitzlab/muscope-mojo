@@ -144,8 +144,8 @@ $(document).ready(function() {
              <th>Name</th>
              <th>Station</th>
              <th>Cast</th>
-             <th>ColDt</th>
-             <th>ColTm</th>
+             <th>Date</th>
+             <th>Time</th>
              <th>Depth</th>
            </tr>
            </thead>

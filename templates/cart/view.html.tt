@@ -14,11 +14,11 @@ $(document).ready(function() {
 [% IF samples.size > 0 %]
   [% IF file_types.size > 0 %]
   <form action="/cart/files">
-    <label for="file_type">Get Files:</label>
-    <select name="file_type">
+    <label for="file_type_id">Get Files:</label>
+    <select name="file_type_id">
       <option value="">--Select--</option>
       [% FOREACH type IN file_types %]
-        <option value="[% type %]">[% type %]</option>
+        <option value="[% type.id %]">[% type.type %]</option>
       [% END %]
     </select>
     <input type="submit" class="btn btn-default">
