@@ -12,5 +12,6 @@ requires 'DBIx::Class';
 requires 'MooseX::NonMoose';
 requires 'Text::RecordParser';
 requires 'Template';
+requires 'Template::Plugin::Comma';
 requires 'Mojolicious::Plugin::JSONConfig';
 requires 'Mojolicious::Plugin::TtRenderer';
