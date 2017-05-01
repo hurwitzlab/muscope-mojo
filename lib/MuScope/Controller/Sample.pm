@@ -76,29 +76,32 @@ sub list {
     }
 
     my @Samples = $schema->resultset('Sample')->search($where);
+    my $data    = sub {
+        map {
+            {
+                $_->get_inflated_columns,
+                latitude => $_->cast->station->latitude,
+                longitude => $_->cast->station->longitude,
+            }
+        } 
+        @Samples 
+    };
 
     $self->respond_to(
-        json => sub {
-            $self->render( 
-                json => [ 
-                    map {{
-                        $_->get_inflated_columns,
-                        latitude => $_->cast->station->latitude,
-                        longitude => $_->cast->station->longitude,
-                    }} 
-                    @Samples 
-                ]
-            );
-        },
+        json => sub { $self->render( json => [$data->()] ) },
 
         html => sub {
             $self->layout('default');
             $self->render( title => 'Samples', samples => \@Samples );
         },
 
-#        txt => sub {
-#            $self->render( text => dump($samples) );
-#        },
+        tab => sub {
+            $self->render( text => $self->tablify($data->()) );
+        },
+
+        txt => sub {
+            $self->render( text => dump($data->()) );
+        },
     );
 }
 
@@ -132,16 +135,11 @@ sub view {
 
         html => sub {
             $self->layout('default');
-
-            $self->render( 
-                sample => $Sample,
-            );
+            $self->render(sample => $Sample);
         },
 
         txt => sub {
-            $self->render( text => dump({ 
-                sample => $Sample,
-            }));
+            $self->render( text => dump({ sample => $Sample }));
         },
     );
 }
@@ -156,7 +154,7 @@ sub search {
 # ----------------------------------------------------------------------
 sub search_param_values {
     my $self    = shift;
-    my $field   = $self->param('field')   or return;
+    my $field   = $self->param('field') or return;
     my $db      = $self->db;
     my $mongo   = $db->mongo;
     my $mdb     = $mongo->get_database('muscope');
@@ -166,7 +164,7 @@ sub search_param_values {
        query    => {}
     ]);
     my %param_types = map { $_->[0], $_->[1] } $self->_search_params();
-    my $type = %param_types{ $field } || '';
+    my $type = $param_types{ $field } || '';
 
     my @values;
     if ($result->{'ok'}) {
@@ -320,20 +318,8 @@ sub search_results {
         },
 
         tab => sub {
-            my $text = '';
-
-            if (@samples > 0) {
-                my @flds = sort keys %{ $samples[0] };
-                my @data = (join "\t", @flds);
-
-                for my $sample (@samples) {
-                    push @data, join "\t", map { $sample->{$_} // '' } @flds;
-                }
-
-                $text = join "\n", @data;
-            }
-
-            $self->render( text => $text );
+            my $out = $self->tablify(@samples);
+            $self->render( text => $out );
         },
 
         txt => sub {
@@ -410,19 +396,7 @@ sub map_search_results {
         },
 
         tab => sub {
-            my $text = '';
-
-            if (@samples > 0) {
-                my @flds = sort keys %{ $samples[0] };
-                my @data = (join "\t", @flds);
-
-                for my $sample (@samples) {
-                    push @data, join "\t", map { $sample->{$_} // '' } @flds;
-                }
-
-                $text = join "\n", @data;
-            }
-
+            my $text = $self->tablify(@samples);
             $self->render( text => $text );
         },
 
@@ -450,17 +424,7 @@ sub sample_file_list {
         },
 
         tab => sub {
-            my $text = '';
-
-            if (@files) {
-                my @flds = sort keys %{ $files[0] };
-                my @data = (join "\t", @flds);
-                for my $file (@files) {
-                    push @data, join "\t", map { $file->{$_} } @flds;
-                }
-                $text = join "\n", @data;
-            }
-
+            my $text = $self->tablify(@files);
             $self->render( text => $text );
         },
 

@@ -1,0 +1,20 @@
+<h1>App List ([% apps.size OR '0' %])</h1>
+
+[% IF apps.size > 0 %]
+<table id="apps-tbl" class="table">
+  <thead>
+    <tr>
+      <th>App</th>
+    </tr>
+  </thead>
+  <tbody>
+    [% FOREACH app IN apps %]
+      <tr>
+        <td><a href="/app/run/[% app.id %]">[% app.app_name %]</a></td>
+      </tr>
+    [% END %]
+  </tbody>
+</table>
+[% ELSE %]
+  No apps.
+[% END %]

@@ -1,0 +1,33 @@
+<script type="text/javascript">
+$(document).ready(function() {
+  $('#user-tbl').dataTable({
+    "lengthMenu": [[10, 25, 50, -1], [10, 25, 50, "All"]],
+    "iDisplayLength": 50,
+  });
+});
+</script>
+
+<h1>User List</h1>
+
+[% IF users.count > 0 %]
+<table id="user-tbl" class="display" cellspacing="0" width="100%">
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th># Logins</th>
+    </tr>
+  </thead>
+  <tbody>
+    [% WHILE (user=users.next) %]
+    <tr>
+      <td>
+        <a href="/admin/user/view/[% user.id %]">[% user.user_name %]</a>
+      </td>
+      <td>[% user.logins_rs.count OR '0' %]</td>
+    </tr>
+    [% END %]
+  </tbody>
+</table>
+[% ELSE %]
+  No users.
+[% END %]

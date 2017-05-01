@@ -1,0 +1,20 @@
+<h1>App Run</h1>
+
+<table class="table">
+  <tr>
+    <th>App</th>
+    <td><a href="/admin/app/edit/[% app_run.app.id %]">[% app_run.app.app_name %]</a></td>
+  </tr>
+  <tr>
+    <th>User</th>
+    <td><a href="/admin/user/view/[% app_run.user.id %]">[% app_run.user.user_name %]</a></td>
+  </tr>
+  <tr>
+    <th>When</th>
+    <td>[% app_run.app_ran_at %]</td>
+  </tr>
+  <tr>
+    <th>Params</th>
+    <td><pre>[% app_run.params %]</pre></td>
+  </tr>
+</table>

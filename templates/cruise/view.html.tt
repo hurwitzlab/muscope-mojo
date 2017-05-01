@@ -147,6 +147,7 @@ $(document).ready(function() {
              <th>Date</th>
              <th>Time</th>
              <th>Depth</th>
+             <th>Cart</th>
            </tr>
            </thead>
 
@@ -159,6 +160,7 @@ $(document).ready(function() {
                <td>[% sample.cast.collection_date %]</td>
                <td>[% sample.cast.collection_time %]</td>
                <td>[% sample.depth %]</td>
+               <td align="center"><a href="/cart/add/[% sample.id %]"><span class="glyphicon glyphicon-plus-sign" aria-hidden="true"></span></a></td>
              </tr>
            [% END %]
            </tbody>

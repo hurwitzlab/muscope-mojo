@@ -2,4 +2,6 @@
 <ul>
   <li><a href="/admin/investigator/list">Investigators</a></li>
   <li><a href="/admin/cruise/list">Cruises</a></li>
+  <li><a href="/admin/user/list">Users</a></li>
+  <li><a href="/admin/app/list">Apps</a></li>
 </ul>

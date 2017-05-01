@@ -1,0 +1,148 @@
+<html>
+<head>
+<script>
+class AgaveFileBrowser {
+    constructor(params) {
+    	let self = this;
+
+        let element = $('#'+params.elementId);
+        if (!params.elementID && !element) {
+            console.error('InfoPanel: Missing required target element');
+            return;
+        }
+        this.element = element;
+
+        this.userName  = params.userName;
+        this.baseUrl   = params.baseUrl;
+        this.authToken = params.authToken;
+        this.selectCallback = params.selectCallback;
+
+        // Initialize contents
+        //this.busy().get_path().done(self.render.bind(self));
+        //self.element.jstree();
+        self.treeInit = false;
+        this.get_path().done(self.render.bind(self));
+	}
+
+	busy(enable) {
+		this.element.html("<div>Loading...</div>");
+		return this;
+	}
+
+	get_path(path) {
+		var self = this;
+
+		if (!path)
+			path = this.userName;
+		let url = this.baseUrl + '/' + path;
+
+		return $.ajax({
+			type: 'GET',
+			url: url,
+			headers: {
+			    'Authorization': 'Bearer ' + self.authToken
+			},
+			data: {}
+		});
+	}
+
+	render(contents) {
+		let self = this;
+
+		console.log(contents);
+
+		if (!self.treeInit) {
+			self.treeInit = 1;
+
+		 	let items = contents.result.filter(function(item) { return (item.name != '.') }).map(function(item) {
+		 		return { 
+		 			id: item.path, 
+		 			text: item.name, 
+		 			data: { type: item.type },
+		 			icon: (item.type == 'dir' ? 'jstree-folder' : 'jstree-file')
+		 		};
+		 	});
+
+		    self.element.hide().jstree("destroy").empty();
+		    self.element.jstree({
+                    core: {
+                        check_callback: true,
+                        data: items
+                    }
+                })
+		    	.bind("select_node.jstree",
+                    function (event, data) {
+                        var id = data.selected[0];
+                        if (self.selectCallback) {
+                        	let node = self.element.jstree().get_node(id);
+                        	self.selectCallback(node);
+                        }
+                    }
+                )
+                .bind("dblclick.jstree",
+                	function(event) {
+						var node = $(event.target).closest("li");
+   						self.node = self.element.jstree().get_node(node[0].id);
+   						setTimeout(function() { self.get_path(node[0].id).done(self.render.bind(self)) }, 10);
+                	}
+                )
+                .show();
+
+            return;
+		}
+
+		if (self.node) {
+			contents.result.forEach(function(item) {
+				if (item.name === '.') return;
+				self.element.jstree().create_node(self.node, {
+					id: item.path,
+					text: item.name,
+					data: {type: item.type},
+					icon: (item.type == 'dir' ? 'jstree-folder' : 'jstree-file')
+				}, "last");
+			});
+
+			self.element.jstree().open_node(self.node);
+		}
+	}
+
+	get_selected_nodes() {
+		let ids = this.element.jstree().get_selected();
+		let node = this.element.jstree().get_node(ids[0]);
+	}
+}
+
+let browser;
+
+$(function() {
+  $('#browser').html('Loading...');
+  browser = new AgaveFileBrowser({
+    elementId: "browser",
+    userName:  "[% user.username %]",
+    authToken: "[% token.access_token %]",
+    baseUrl:   "https://agave.iplantc.org/files/v2/listings",
+    selectCallback: function(node) {
+      console.log(node);
+      $('#selected').val(node.id);
+    }
+  });
+
+  $('#select').click(function() {
+    let selected = $('#selected').val();
+    alert(selected);
+  })
+});
+</script>
+</head>
+
+<h1>File Browser</h1>
+
+<h1>Agave File Browser Demo</h1>
+
+<button id="select">Select</button><input id="selected" size=30/>
+<div style="min-height:400px;max-height:400px;overflow:auto;border:1px solid lightgray;">
+  <div id="browser"></div>
+</div>
+
+</body>
+</html>

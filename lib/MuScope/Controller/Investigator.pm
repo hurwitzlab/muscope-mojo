@@ -35,12 +35,11 @@ sub list {
     my $self   = shift;
     my $schema = $self->db->schema;
     my $Invs   = $schema->resultset('Investigator');
+    my $data   = sub { map { {$_->get_inflated_columns()} } $Invs->all() };
 
     $self->respond_to(
         json => sub {
-            $self->render( json => [
-                map { {$_->get_inflated_columns()} } $Invs->all()
-            ]);
+            $self->render( json => [ $data->() ]);
         },
 
         html => sub {
@@ -49,25 +48,11 @@ sub list {
         },
 
         txt => sub {
-            $self->render( text => dump([
-                map { {$_->get_inflated_columns()} } $Invs->all()
-            ]));
+            $self->render( text => dump($data->()) );
         },
 
         tab => sub {
-            my $text = '';
-
-            if ($Invs->count > 0) {
-                my @flds = $Invs->result_source->columns;
-                my @data = (join "\t", @flds);
-
-                while (my $inv = $Invs->next) {
-                    push @data, join "\t", map { $inv->$_() // '' } @flds;
-                }
-
-                $text = join "\n", @data;
-            }
-
+            my $text = $self->tablify($data->());
             $self->render( text => $text );
         },
     );

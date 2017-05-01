@@ -34,12 +34,12 @@ $(document).ready(function() {
 
           <div class="form-group">
             <label for="start_date">Start Date</label><br/>
-            <input type="text" name="start_date" id="start_date" size="60" value="[% cruise.start_date %]">
+            <input type="date" name="start_date" id="start_date" size="60" value="[% cruise.start_date %]">
           </div>
 
           <div class="form-group">
             <label for="end_date">End Date</label><br/>
-            <input type="text" name="end_date" id="end_date" size="60" value="[% cruise.end_date %]">
+            <input type="date" name="end_date" id="end_date" size="60" value="[% cruise.end_date %]">
           </div>
 
           <div class="text-center form-group">

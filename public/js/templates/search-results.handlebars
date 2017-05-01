@@ -1,5 +1,5 @@
 <div class="row">
-  <h2 id="nav-tabs">Results: [% samples.size %]</h2>
+  <h2 id="nav-tabs">Results: {{count}}</h2>
   <div class="pull-right">
     <a class="btn btn-default" href="/sample/search_results_map?{{formData}}" target="_blank">View On Map</a>
     <a class="btn btn-default" data-toggle="collapse" href="#permalink" aria-expanded="false" aria-controls="permalink">Permalink</a>
@@ -11,7 +11,7 @@
       </div>
     </div>
   </div>
-  <table id="samples-tbl" class="display" cellspacing="0" width="100%">
+  <table id="samples-tbl" class="table" cellspacing="0" width="100%">
     <thead>
       <tr>
         <th><input id="toggler" type="checkbox" onclick="toggleAll()"></th>

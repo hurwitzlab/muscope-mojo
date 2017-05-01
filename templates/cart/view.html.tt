@@ -25,6 +25,19 @@ $(document).ready(function() {
   </form>
   [% END %]
 
+  [% IF apps.size > 0 %]
+  <form action="/app/launch">
+    <label for="app_id">Run app:</label>
+    <select name="app_id">
+      <option value="">--Select--</option>
+      [% FOREACH app IN apps %]
+        <option value="[% app %]">[% app %]</option>
+      [% END %]
+    </select>
+    <input type="submit" class="btn btn-default">
+  </form>
+  [% END %]
+
   <div class="pull-right">
   <a href="/download?url=/cart/view"><span class="glyphicon glyphicon-download-alt" aria-hidden="true"></span></a>
   <a href="/cart/purge"><span class="glyphicon glyphicon-trash" aria-hidden="true"></span></a></span>

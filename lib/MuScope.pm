@@ -2,24 +2,85 @@ package MuScope;
 
 use Mojo::Base 'Mojolicious';
 use MuScope::DB;
+use Data::Dump 'dump';
 
 sub startup {
     my $self = shift;
 
     $self->plugin('tt_renderer');
 
-    $self->plugin('JSONConfig', { file => 'muscope.json' });
+    $self->plugin('write_excel');
+
+    $self->plugin('JSONConfig' => { file => 'muscope.json' });
+
+    my $config = $self->config;
+    if (my $secret = $config->{'secret'}) {
+        $self->secrets([$secret]);
+    }
 
     $self->sessions->default_expiration(86400);
 
-    $self->app->secrets(['N5DsbR4yYCi0Fe37yG9CCDTIGdCXYWE0GkrvMYKCEL80Mb9T5AinStEFygJ5wNoUmxrd51eR6IJKhLGkzsrXJKQhhpB86tjkL3EF']);
-
     my $r = $self->routes;
+
+    #
+    # Auth
+    #
+    my $auth = $r->under(sub {
+        my $self    = shift;
+        my $token   = $self->session->{'token'};
+        my $expired = 1;
+
+        if ($token && ref $token eq 'HASH') {
+            my $expires = $token->{'expires'} ||  0;
+            my $now     = time();
+            $expired    = $expires < $now;
+        }
+
+        if ($expired) {
+            my $state  = '000';
+            my $config = $self->config;
+            my $key    = $config->{'tacc_api_key'} or die "No TACC API key\n";
+            my $params = join '&',
+                'client_id='    . $key->{'public'},
+                'redirect_uri=' . $key->{'redirect_url'},
+                'state='        . $state,
+                'scope=PRODUCTION',
+                'response_type=code';
+
+            my $url = "https://agave.iplantc.org/authorize?$params";
+
+            $self->redirect_to($url);
+            return 0;
+        }
+        else {
+            return 1;
+        }
+    });
 
     # 
     # Admin endpoints
     # 
     $r->get('/admin')->to('admin#index');
+
+    #
+    # App
+    #
+    $r->get('/admin/app/list')->to('admin-app#list');
+
+    $r->get('/admin/app/create')->to('admin-app#create');
+
+    $r->get('/admin/app/edit/:app_id')->to('admin-app#edit');
+
+    $r->post('/admin/app/insert')->to('admin-app#insert');
+
+    $r->get('/admin/app/delete/:app_id')->to('admin-app#delete');
+
+    $r->post('/admin/app/update')->to('admin-app#update');
+
+    #
+    # AppRun
+    #
+    $r->get('/admin/app_run/view/:app_run_id')->to('admin-app_run#view');
 
     #
     # Cruise
@@ -134,9 +195,24 @@ sub startup {
     $r->post('/admin/sample_file/delete/:sample_file_id')->to('admin-sample_file#delete');
 
     #
+    # User
+    #
+    $r->get('/admin/user/list')->to('admin-user#list');
+
+    $r->get('/admin/user/view/:user_id')->to('admin-user#view');
+
+    #
     # User endpoints
     #
     $r->get('/')->to('welcome#index');
+
+    $r->get('/app/launch')->to('app#launch');
+
+    $auth->get('/app/run/#app_id')->to('app#run');
+
+    $r->get('/app/list')->to('app#list');
+
+    $r->get('/index')->to('welcome#index');
 
     $r->get('/download')->to('download#format');
 
@@ -145,6 +221,8 @@ sub startup {
     $r->get('/feedback')->to('feedback#form');
 
     $r->post('/feedback/submit')->to('feedback#submit');
+
+    $r->get('/cart/add/:item')->to('cart#add');
 
     $r->post('/cart/add')->to('cart#add');
 
@@ -166,7 +244,7 @@ sub startup {
 
     $r->get('/cruise/info')->to('cruise#info');
 
-    $r->get('/cruise/browse')->to('cruise#browse');
+    $r->get('/cruise/download/:cruise_id')->to('cruise#download');
 
     $r->get('/cruise/view/:cruise_id')->to('cruise#view');
 
@@ -176,7 +254,17 @@ sub startup {
 
     $r->get('/investigator/view/:investigator_id')->to('investigator#view');
 
+    $auth->get('/job/list')->to('job#list');
+
+    $auth->get('/job/view/:job_id')->to('job#view');
+
     $r->get('/library_kit/view/:library_kit_id')->to('library_kit#view');
+
+    $auth->get('/login')->to('login#login');
+
+    $r->get('/logout')->to('login#logout');
+
+    $r->get('/auth')->to('login#auth');
 
     $r->get('/sample/info')->to('sample#info');
 
@@ -262,6 +350,55 @@ sub startup {
             return MuScope::DB->new($config->{'db'});
         }
     );
+
+    $self->helper(
+        tablify => sub {
+            my ($self, @data) = @_;
+            my $out  = '';
+
+            if (@data && ref $data[0] eq 'HASH') {
+                my @hdr  = sort keys %{ $data[0] };
+                my @out  = join "\t", @hdr;
+                for my $row (@data) {
+                    push @out, join "\t", (map { $row->{$_} // '' } @hdr);
+                }
+                $out = join "\n", @out;
+            }
+
+            return $out;
+        }
+    );
+
+#    $self->helper( get_access_token => sub {
+#        my ($self, %args) = @_;
+#        my $token   = $self->session->{'token'};
+#        my $expired = 1;
+#
+#        if ($token && ref $token eq 'HASH') {
+#            my $expires = $token->{'expires'} ||  0;
+#            my $now     = time();
+#            $expired    = $expires < $now;
+#        }
+#
+#        if ($expired) {
+#            my $state  = $args{'state'} || '000';
+#            my $config = $self->config;
+#            my $key    = $config->{'tacc_api_key'} or die "No TACC API key\n";
+#            my $params = join '&',
+#                'client_id='    . $key->{'public'},
+#                'redirect_uri=' . $key->{'redirect_url'},
+#                'state='        . $state,
+#                'scope=PRODUCTION',
+#                'response_type=code';
+#
+#            my $url = "https://agave.iplantc.org/authorize?$params";
+#
+#            $self->redirect_to($url);
+#        }
+#        else {
+#            $token;
+#        }
+#    });
 }
 
 1;

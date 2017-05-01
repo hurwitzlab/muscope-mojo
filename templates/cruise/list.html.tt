@@ -11,13 +11,13 @@ $(document).ready(function() {
 </script>
 
 <div class="row">
-  <h1>Cruises ([% cruises.count OR '0' %])</h1>
+  <h1>Cruises ([% cruises.size %])</h1>
   [% IF domain %]
     <div class="well well-sm text-center">
     <a href="[% c.req.url.path %]"><span class="glyphicon glyphicon-remove-circle"></span>&nbsp;[% domain %] only</a>
     </div>
   [% END %]
-  [% IF cruises.count > 0 %]
+  [% IF cruises.size > 0 %]
   <div class="pull-right">
     <a href="/download"><span class="glyphicon glyphicon-download-alt" aria-hidden="true"></span></a>
   </div>
@@ -30,7 +30,7 @@ $(document).ready(function() {
       </tr>
     </thead>
     <tbody>
-    [% WHILE (cruise=cruises.next) %]
+    [% FOREACH cruise IN cruises %]
       <tr>
         <td><a href="/cruise/view/[% cruise.id %]">[% cruise.cruise_name | truncate(70) %]</a></td>
         <td>

@@ -89,18 +89,7 @@ sub files {
         },
 
         tab => sub {
-            my $out  = '';
-            my @data = $struct->();
-
-            if (@data && ref $data[0] eq 'HASH') {
-                my @hdr  = sort keys %{ $data[0] };
-                my @out  = join "\t", @hdr;
-                for my $row (@data) {
-                    push @out, join "\t", (map { $row->{$_} } @hdr);
-                }
-                $out = join "\n", @out;
-            }
-
+            my $out = $self->tablify($struct->());
             $self->render( text => $out );
         },
 
@@ -170,6 +159,8 @@ sub view {
         },
 
         html => sub {
+            my $conf = $self->config;
+
             $self->layout('default');
 
             $self->render(
@@ -177,22 +168,12 @@ sub view {
                 session    => $session,
                 samples    => \@samples,
                 file_types => \@FileTypes,
+                apps       => $conf->{'apps'},
             );
         },
 
         tab => sub {
-            my $out  = '';
-            my @data = $struct->();
-
-            if (@data && ref $data[0] eq 'HASH') {
-                my @hdr  = sort keys %{ $data[0] };
-                my @out  = join "\t", @hdr;
-                for my $row (@data) {
-                    push @out, join "\t", (map { $row->{$_} } @hdr);
-                }
-                $out = join "\n", @out;
-            }
-
+            my $out = $self->tablify($struct->());
             $self->render( text => $out );
         },
 

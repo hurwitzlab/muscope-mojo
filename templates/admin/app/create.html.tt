@@ -1,0 +1,14 @@
+<h1>Create App</h1>
+
+<div class="row">
+  <form role="form" method="post" action="/admin/app/insert">
+    <div class="form-group">
+      <label for="app_name">App Name</label><br/>
+      <input type="text" name="app_name" id="app_name" size="60">
+    </div>
+
+    <div class="text-center form-group">
+      <button type="submit" class="btn btn-primary">Submit</button>
+    </div>
+  </form>
+</div>

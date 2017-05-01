@@ -2,22 +2,24 @@ package MuScope::Controller::Welcome;
 
 use Data::Dump 'dump';
 use Mojo::Base 'Mojolicious::Controller';
+use Mojo::UserAgent;
 
 # ----------------------------------------------------------------------
 sub index {
     my $self = shift;
 
-    my @routes = sort (
+    my $routes = sub { 
+        sort 
         grep { !/\/(admin|feedback)/ }
         grep { /\S+/ }
         map  { $_->to_string   }
         grep { $_->is_endpoint }
         @{ $self->app->routes->children }
-    );
+    };
 
     $self->respond_to(
         json => sub {
-            $self->render( json => \@routes );
+            $self->render( json => [ $routes->() ] );
         },
 
         html => sub {
@@ -26,7 +28,7 @@ sub index {
         },
 
         txt => sub {
-            $self->render( text => dump(\@routes) );
+            $self->render( text => dump($routes->()) );
         },
     );
 }

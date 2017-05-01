@@ -1,0 +1,41 @@
+<script type="text/javascript">
+$(document).ready(function() {
+  $('#app-tbl').dataTable({
+    "lengthMenu": [[10, 25, 50, -1], [10, 25, 50, "All"]],
+    "iDisplayLength": 50,
+  });
+});
+</script>
+
+<h1>App List</h1>
+
+[% IF apps.count > 0 %]
+<div class="pull-right">
+<a href="/admin/app/create"><span class="glyphicon glyphicon-plus-sign" aria-hidden="true"></span></a>
+</div>
+<table id="app-tbl" class="display" cellspacing="0" width="100%">
+  <thead>
+    <tr>
+      <th>App</th>
+      <th>Active</th>
+      <th># Runs</th>
+      <th>Action</th>
+    </tr>
+  </thead>
+  <tbody>
+    [% WHILE (app=apps.next) %]
+    <tr>
+      <td><a href="/admin/app/edit/[% app.id %]">[% app.app_name %]</a></td>
+      <td align="right">[% app.is_active ? '✓' : '✗' %]</a></td>
+      <td align="right">[% app.app_runs_rs.count %]</a></td>
+      <td align="center">
+        <a href="/admin/app/edit/[% app.id %]"><span class="glyphicon glyphicon-edit" aria-hidden="true"></span></a>
+        <a href="/admin/app/delete/[% app.id %]"><span class="glyphicon glyphicon-trash"></span></a>
+      </td>
+    </tr>
+    [% END %]
+  </tbody>
+</table>
+[% ELSE %]
+  No apps.  <a href="/admin/app/create">Create</a>
+[% END %]

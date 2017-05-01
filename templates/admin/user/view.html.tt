@@ -1,0 +1,84 @@
+<script type="text/javascript">
+$(document).ready(function() {
+  var dt_opts = {
+    "lengthMenu": [[10, 25, 50, -1], [10, 25, 50, "All"]],
+    "iDisplayLength": 50,
+    "stateSave": true
+  };
+
+  $('#logins-tbl').dataTable(dt_opts);
+  $('#app_runs-tbl').dataTable(dt_opts);
+});
+</script>
+
+
+<div class="row">
+  <h1 id="nav-tabs">View User: [% user.user_name %]</h1>
+  <div class="bs-component">
+    <ul class="nav nav-tabs">
+      <li class="active"><a href="#main" data-toggle="tab">Main</a></li>
+      <li><a href="#logins" data-toggle="tab">Logins ([% user.logins_rs.count %])</a></li>
+      <li><a href="#app_runs" data-toggle="tab">App Runs ([% user.app_runs_rs.count %])</a></li>
+    </ul>
+
+    <div id="tabContent" class="tab-content">
+      <div class="tab-pane fade active in" id="main">
+        <br/>
+        <table class="table">
+          <tr>
+            <th>User Name</th>
+            <td>[% user.user_name %]</td>
+          </tr>
+        </table>
+      </div>
+
+      <div class="tab-pane fade" id="logins">
+        <br/>
+        [% IF user.logins_rs.count > 0 %]
+          <table class="display" id="logins-tbl">
+            <thead>
+              <tr>
+                <th>When</th>
+              </tr>
+            </thead>
+            <tbody>
+              [% FOREACH login IN user.logins %]
+              <tr>
+                <td>[% login.login_date %]</td>
+              </tr>
+              [% END %]
+             </tbody>
+           </table>
+        [% ELSE %]
+          No logins.
+        [% END %]
+      </div>
+
+      <div class="tab-pane fade" id="app_runs">
+        <br/>
+        [% IF user.app_runs_rs.count > 0 %]
+          <table class="display" id="app_runs-tbl">
+            <thead>
+              <tr>
+                <th>App</th>
+                <th>When</th>
+                <th>View</th>
+              </tr>
+            </thead>
+            <tbody>
+              [% FOREACH app_run IN user.app_runs %]
+              <tr>
+                <td><a href="/admin/app/edit/[% app_run.app.id %]">[% app_run.app.app_name %]</a></td>
+                <td>[% app_run.app_ran_at %]</td>
+                <td align="center"><a href="/admin/app_run/view/[% app_run.id %]"><span class="glyphicon glyphicon-eye-open"></span></a></td>
+              </tr>
+              [% END %]
+             </tbody>
+           </table>
+        [% ELSE %]
+          No app_runs.
+        [% END %]
+      </div>
+    </div>
+  </div>
+</div>

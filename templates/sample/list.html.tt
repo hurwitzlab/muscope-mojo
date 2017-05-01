@@ -38,6 +38,7 @@ $(document).ready(function() {
        <th>Investigator</th>
        <th>Sample</th>
        <th>Type</th>
+       <th>Cart</th>
      </tr>
      </thead>
 
@@ -50,6 +51,7 @@ $(document).ready(function() {
          <td><a href="/investigator/view/[% sample.investigator.id %]">[% sample.investigator.last_name %], [% sample.investigator.first_name %]</a></td>
          <td><a href="/sample/view/[% sample.id %]">[% sample.sample_name %]</a></td>
          <td><a href="/sample_type/view/[% sample.sample_type_id %]">[% sample.sample_type.sample_type %]</a></td>
+         <td align="center"><a href="/cart/add/[% sample.id %]"><span class="glyphicon glyphicon-plus-sign" aria-hidden="true"></span></a></td>
        </tr>
      [% END %]
      </tbody>
