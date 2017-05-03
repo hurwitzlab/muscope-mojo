@@ -35,7 +35,7 @@ $(document).ready(function() {
       <div class="tab-pane fade" id="logins">
         <br/>
         [% IF user.logins_rs.count > 0 %]
-          <table class="display" id="logins-tbl">
+          <table class="table" id="logins-tbl">
             <thead>
               <tr>
                 <th>When</th>
@@ -57,7 +57,7 @@ $(document).ready(function() {
       <div class="tab-pane fade" id="app_runs">
         <br/>
         [% IF user.app_runs_rs.count > 0 %]
-          <table class="display" id="app_runs-tbl">
+          <table class="table" id="app_runs-tbl">
             <thead>
               <tr>
                 <th>App</th>

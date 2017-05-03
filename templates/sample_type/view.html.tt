@@ -32,7 +32,7 @@ $(document).ready(function() {
       <div class="tab-pane fade" id="samples">
         <br/>
         [% IF sample_type.samples_rs.count > 0 %]
-          <table id="samples-tbl" class="display" cellspacing="0" width="100%">
+          <table id="samples-tbl" class="table" cellspacing="0" width="100%">
            <thead>
            <tr>
              <th>Cruise</th>

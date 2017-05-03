@@ -12,7 +12,7 @@ $(document).ready(function() {
 <h1>Sample Attribute Type List</h1>
 
 [% IF sample_attr_types.count > 0 %]
-<table id="cruise-tbl" class="display" cellspacing="0" width="100%">
+<table id="cruise-tbl" class="table" cellspacing="0" width="100%">
   <thead>
     <tr>
       <th>Category</th>

@@ -64,7 +64,7 @@ $(document).ready(function() {
         <a href="/admin/sample_attr_type_alias/create/[% sample_attr_type.id %]"><span class="glyphicon glyphicon-plus-sign" aria-hidden="true"></span></a>
         </div>
         [% IF sample_attr_type.sample_attr_type_aliases_rs.count > 0 %]
-          <table class="display" id="alias-tbl">
+          <table class="table" id="alias-tbl">
             <thead>
               <tr>
                 <th>Alias</th>
@@ -92,7 +92,7 @@ $(document).ready(function() {
         <br/>
         <h2>Sample Attributes ([% sample_attr_type.sample_attrs_rs.count %])</h2>
         [% IF sample_attr_type.sample_attrs_rs.count > 0 %]
-          <table class="display" id="attr-tbl">
+          <table class="table" id="attr-tbl">
             <thead>
               <tr>
                 <th>Sample</th>

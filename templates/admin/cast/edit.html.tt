@@ -68,7 +68,7 @@ $(document).ready(function() {
           <a href="/admin/sample/create/[% cast.id %]"><span class="glyphicon glyphicon-plus-sign" aria-hidden="true"></span></a>
         </div>
         [% IF cast.samples_rs.count > 0 %]
-          <table class="display" id="samples-tbl">
+          <table class="table" id="samples-tbl">
             <thead>
               <tr>
                 <th>Name</th>

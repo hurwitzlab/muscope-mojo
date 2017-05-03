@@ -57,7 +57,7 @@ $(document).ready(function() {
         <a href="/admin/station/create/[% cruise.id %]"><span class="glyphicon glyphicon-plus-sign" aria-hidden="true"></span></a>
         </div>
         [% IF cruise.stations_rs.count > 0 %]
-          <table class="display" id="station-tbl">
+          <table class="table" id="station-tbl">
             <thead>
               <tr>
                 <th>Station Num</th>
@@ -89,7 +89,7 @@ $(document).ready(function() {
 
         <h2>Casts ([% cruise.num_casts %])</h2>
         [% IF cruise.num_casts > 0 %]
-          <table class="display" id="casts-tbl">
+          <table class="table" id="casts-tbl">
             <thead>
               <tr>
                 <th>Station Num</th>
@@ -123,7 +123,7 @@ $(document).ready(function() {
 
         <h2>Samples ([% cruise.num_samples %])</h2>
         [% IF cruise.num_samples > 0 %]
-          <table class="display" id="samples-tbl">
+          <table class="table" id="samples-tbl">
             <thead>
               <tr>
                 <th>Cruise</th>

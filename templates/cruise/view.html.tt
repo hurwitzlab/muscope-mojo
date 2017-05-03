@@ -112,7 +112,7 @@ $(document).ready(function() {
       <div class="tab-pane fade" id="stations">
         <br/>
         [% IF cruise.stations_rs.count > 0 %]
-          <table id="stations-tbl" class="display" cellspacing="0" width="100%">
+          <table id="stations-tbl" class="table" cellspacing="0" width="100%">
            <thead>
            <tr>
              <th>Name</th>
@@ -138,7 +138,7 @@ $(document).ready(function() {
       <div class="tab-pane fade" id="samples">
         <br/>
         [% IF cruise.num_samples > 0 %]
-          <table id="samples-tbl" class="display" cellspacing="0" width="100%">
+          <table id="samples-tbl" class="table" cellspacing="0" width="100%">
            <thead>
            <tr>
              <th>Name</th>

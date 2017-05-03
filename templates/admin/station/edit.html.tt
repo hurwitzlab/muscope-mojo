@@ -57,7 +57,7 @@ $(document).ready(function() {
           <a href="/admin/cast/create/[% station.id %]"><span class="glyphicon glyphicon-plus-sign" aria-hidden="true"></span></a>
         </div>
         [% IF station.casts_rs.count > 0 %]
-          <table class="display" id="cast-tbl">
+          <table class="table" id="cast-tbl">
             <thead>
               <tr>
                 <th>Cast Num</th>

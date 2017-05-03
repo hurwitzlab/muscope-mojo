@@ -11,7 +11,7 @@ $(document).ready(function() {
 <h1>Investigator List</h1>
 
 [% IF investigators.count > 0 %]
-<table id="investigators-tbl" class="display" cellspacing="0" width="100%">
+<table id="investigators-tbl" class="table" cellspacing="0" width="100%">
   <thead>
     <tr>
       <th>Last Name</th>

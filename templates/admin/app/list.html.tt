@@ -13,7 +13,7 @@ $(document).ready(function() {
 <div class="pull-right">
 <a href="/admin/app/create"><span class="glyphicon glyphicon-plus-sign" aria-hidden="true"></span></a>
 </div>
-<table id="app-tbl" class="display" cellspacing="0" width="100%">
+<table id="app-tbl" class="table" cellspacing="0" width="100%">
   <thead>
     <tr>
       <th>App</th>

@@ -174,7 +174,7 @@ $(document).ready(function() {
 
       <div class="tab-pane fade" id="sample_attr">
         <br/>
-        <table class="display" id="attr-tbl">
+        <table class="table" id="attr-tbl">
           <thead>
             <tr>
               <th>Category</th>
@@ -198,7 +198,7 @@ $(document).ready(function() {
 
       <div class="tab-pane fade" id="data_products">
         <br/>
-        <table class="display" id="data-tbl">
+        <table class="table" id="data-tbl">
           <thead>
             <tr>
               <th>Type</th>

@@ -11,7 +11,7 @@
       </div>
     </div>
   </div>
-  <table id="samples-tbl" class="display" cellspacing="0" width="100%">
+  <table id="samples-tbl" class="table" cellspacing="0" width="100%">
     <thead>
       <tr>
         <th><input id="toggler" type="checkbox" onclick="toggleAll()"></th>

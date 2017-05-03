@@ -36,7 +36,7 @@ $(document).ready(function() {
         <br/>
         <h2>Logins ([% user.logins_rs.count %])</h2>
         [% IF user.logins_rs.count > 0 %]
-          <table class="display" id="logins-tbl">
+          <table class="table" id="logins-tbl">
             <thead>
               <tr>
                 <th>When</th>
@@ -59,7 +59,7 @@ $(document).ready(function() {
         <br/>
         <h2>Logins ([% user.app_runs_rs.count %])</h2>
         [% IF user.app_runs_rs.count > 0 %]
-          <table class="display" id="app_runs-tbl">
+          <table class="table" id="app_runs-tbl">
             <thead>
               <tr>
                 <th>App</th>

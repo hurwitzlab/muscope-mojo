@@ -10,7 +10,7 @@ $(document).ready(function() {
 <h1>User List</h1>
 
 [% IF users.count > 0 %]
-<table id="user-tbl" class="display" cellspacing="0" width="100%">
+<table id="user-tbl" class="table" cellspacing="0" width="100%">
   <thead>
     <tr>
       <th>Name</th>

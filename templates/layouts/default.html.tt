@@ -129,10 +129,5 @@
     ga('send', 'pageview');
 
     </script>
-    <footer class="footer">
-      <div class="container text-center">
-        <span class="text-muted"><a href="http://hurwitzlab.org">&copy; Hurwitz Lab</a></span>
-      </div>
-    </footer>
   </body>
 </html>

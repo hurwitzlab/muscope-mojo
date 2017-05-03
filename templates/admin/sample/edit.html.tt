@@ -134,7 +134,7 @@ $(document).ready(function() {
           <a href="/admin/sample_attr/create/[% sample.id %]"><span class="glyphicon glyphicon-plus-sign" aria-hidden="true"></span></a>
         </div>
         [% IF sample.sample_attrs_rs.count > 0 %]
-          <table class="display" id="attrs-tbl">
+          <table class="table" id="attrs-tbl">
             <thead>
               <tr>
                 <th>Category</th>
@@ -172,7 +172,7 @@ $(document).ready(function() {
           <a href="/admin/sample_file/create/[% sample.id %]"><span class="glyphicon glyphicon-plus-sign" aria-hidden="true"></span></a>
         </div>
         [% IF sample.sample_files_rs.count > 0 %]
-          <table class="display" id="files-tbl">
+          <table class="table" id="files-tbl">
             <thead>
               <tr>
                 <th>Type</th>

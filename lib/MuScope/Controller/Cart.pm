@@ -32,28 +32,82 @@ sub icon {
 }
 
 # ----------------------------------------------------------------------
+sub file_types {
+    my $self    = shift;
+    my $schema  = $self->db->schema;
+    my $session = $self->session;
+
+    my %file_type;
+    for my $sample_id (@{ $session->{'items'} || [] }) {
+        if (my $Sample = $schema->resultset('Sample')->find($sample_id)) {
+            for my $File ($Sample->sample_files) {
+                $file_type{ $File->sample_file_type_id }++
+            }
+        }
+    }
+
+    my @types;
+    for my $id (keys %file_type) {
+        if (my ($FileType) = $schema->resultset('SampleFileType')->find($id)) {
+            push @types, { 
+                sample_file_type_id => $FileType->id,
+                sample_file_type    => $FileType->type,
+            };
+        }
+    }
+
+    @types = sort { $a->{'sample_file_type'} cmp $b->{'sample_file_type'} }
+             @types;
+
+    $self->respond_to(
+        json => sub {
+            $self->render( json => \@types );
+        },
+
+        tab => sub {
+            my $out = $self->tablify(@types);
+            $self->render( text => $out );
+        },
+
+        txt => sub {
+            $self->render( text => dump(\@types));
+        },
+    );
+}
+
+# ----------------------------------------------------------------------
 sub files {
     my $self    = shift;
     my $schema  = $self->db->schema;
     my $session = $self->session;
 
-    my $FileType;
-    if (my $type_id = $self->param('file_type_id')) {
-        ($FileType) = $schema->resultset('SampleFileType')->find($type_id)
-          or return $self->reply->exception("Bad file_type ($type_id)");
+    my @FileTypes;
+
+    if (my @type_ids = split(/\s*,\s*/, $self->param('file_type_id'))) {
+        @FileTypes = map { $schema->resultset('SampleFileType')->find($_) }
+                     @type_ids;
     }
-    elsif (my $file_type = $self->param('file_type')) {
-        ($FileType) = $schema->resultset('SampleFileType')->search({
-            type    => $file_type
-        }) or return $self->reply->exception("Bad file_type ($file_type)");
+    elsif (my @file_types = split(/\s*,\s*/, $self->param('file_type'))) {
+        @FileTypes = 
+            map { $schema->resultset('SampleFileType')->search({ type => $_ }) }
+            @file_types;
     }
 
     my @files;
     for my $sample_id (@{ $session->{'items'} || [] }) {
-        push @files, $schema->resultset('SampleFile')->search({
-            sample_id           => $sample_id,
-            sample_file_type_id => $FileType->id,
-        });
+        if (@FileTypes) {
+            push @files, map { 
+                $schema->resultset('SampleFile')->search({
+                    sample_id           => $sample_id,
+                    sample_file_type_id => $_->id
+                });
+            } @FileTypes;
+        }
+        else {
+            push @files, $schema->resultset('SampleFile')->search({ 
+                sample_id => $sample_id
+            });
+        }
     }
 
     my $struct = sub {

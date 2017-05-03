@@ -96,7 +96,7 @@ $(document).ready(function() {
       <div class="tab-pane fade" id="casts">
         <br/>
         [% IF station.casts_rs.count > 0 %]
-          <table id="casts-tbl" class="display" cellspacing="0" width="100%">
+          <table id="casts-tbl" class="table" cellspacing="0" width="100%">
            <thead>
            <tr>
              <th>Cast Number</th>
@@ -122,7 +122,7 @@ $(document).ready(function() {
       <div class="tab-pane fade" id="samples">
         <br/>
         [% IF station.num_samples > 0 %]
-          <table id="samples-tbl" class="display" cellspacing="0" width="100%">
+          <table id="samples-tbl" class="table" cellspacing="0" width="100%">
            <thead>
            <tr>
              <th>Name</th>

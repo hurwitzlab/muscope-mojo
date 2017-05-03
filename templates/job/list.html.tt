@@ -15,7 +15,7 @@ $(document).ready(function() {
 [% USE Dumper %]
 [% jobs = result.result %]
 <h1>Job List ([% jobs.size %])</h1>
-<table class="display" id="jobs-tbl">
+<table class="table" id="jobs-tbl">
   <thead>
     <tr>
       <th>App ID</th>

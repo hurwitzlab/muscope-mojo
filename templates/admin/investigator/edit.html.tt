@@ -70,7 +70,7 @@ $(document).ready(function() {
 
         <h2>Samples ([% investigator.samples_rs.count %])</h2>
         [% IF investigator.samples_rs.count > 0 %]
-          <table class="display" id="samples-tbl">
+          <table class="table" id="samples-tbl">
             <thead>
               <tr>
                 <th>Cruise</th>
@@ -100,7 +100,7 @@ $(document).ready(function() {
 
         <h2>Cruises ([% investigator.num_cruises %])</h2>
         [% IF investigator.num_cruises > 0 %]
-          <table class="display" id="cruise-tbl">
+          <table class="table" id="cruise-tbl">
             <thead>
               <tr>
                 <th>Cruise</th>

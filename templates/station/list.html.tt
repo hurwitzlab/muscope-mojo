@@ -14,7 +14,7 @@ $(document).ready(function() {
     <div class="pull-right">
       <a href="/download"><span class="glyphicon glyphicon-download-alt" aria-hidden="true"></span></a>
     </div>
-    <table id="stations-tbl" class="display" cellspacing="0" width="100%">
+    <table id="stations-tbl" class="table" cellspacing="0" width="100%">
      <thead>
      <tr>
        <th>Cruise</th>

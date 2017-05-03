@@ -37,7 +37,7 @@ sub startup {
         }
 
         if ($expired) {
-            my $state  = '000';
+            my $state  = $self->req->headers->referrer || '000';
             my $config = $self->config;
             my $key    = $config->{'tacc_api_key'} or die "No TACC API key\n";
             my $params = join '&',
@@ -206,7 +206,7 @@ sub startup {
     #
     $r->get('/')->to('welcome#index');
 
-    $r->get('/app/launch')->to('app#launch');
+    $r->any('/app/launch')->to('app#launch');
 
     $auth->get('/app/run/#app_id')->to('app#run');
 
@@ -227,6 +227,8 @@ sub startup {
     $r->post('/cart/add')->to('cart#add');
 
     $r->get('/cart/files/:file_type_id')->to('cart#files');
+
+    $r->get('/cart/file_types')->to('cart#file_types');
 
     $r->get('/cart/files')->to('cart#files');
 

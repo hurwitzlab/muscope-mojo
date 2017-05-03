@@ -4,6 +4,14 @@ use Mojo::Base 'Mojolicious::Controller';
 use Data::Dump 'dump';
 use JSON::XS qw'encode_json decode_json';
 
+sub _fix_inputs {
+    my $path  = shift or return '';
+
+    return 
+      map { $_ =~ s{^/iplant/home/}{agave://data.iplantcollaborative.org/} }
+      split(';', $path);
+}
+
 # ----------------------------------------------------------------------
 sub launch {
     my $self    = shift;
@@ -23,13 +31,16 @@ sub launch {
     my $app_name = $App->app_name;
     if ($app_name =~ /^muscope-mash/i) {
         my @sample_names;
-        for my $sample_id (@sample_ids) {
-            my $Sample = $schema->resultset('Sample')->find($sample_id);
-            push @sample_names, $Sample->sample_name;
-        }
+        #
+        # This cannot be.  We can't silently take the names from 
+        # the cart.  The user must explicitly choose this.  How?
+        #
+#        for my $sample_id (@sample_ids) {
+#            my $Sample = $schema->resultset('Sample')->find($sample_id);
+#            push @sample_names, $Sample->sample_name;
+#        }
 
-        my $query  = $self->param('QUERY') or die "No QUERY\n";
-        $query =~ s{^/iplant/home/}{agave://data.iplantcollaborative.org/};
+        my $query = _fix_inputs($self->param('QUERY'));
 
         $job = {
             name       =>  "muscope-mash-$job_id",
@@ -40,8 +51,7 @@ sub launch {
         }
     }
     elsif ($app_name =~ /^muscope-b?last/i) {
-        my $query  = $self->param('QUERY') or die "No QUERY\n";
-        $query =~ s{^/iplant/home/}{agave://data.iplantcollaborative.org/};
+        my $query  = _fix_inputs($self->param('QUERY')) or die "No QUERY\n";
         
         my $pct_id = $self->param('PCT_ID');
         $job = {
@@ -59,14 +69,16 @@ sub launch {
     if (my $email = $session->{'user'}{'email'}) {
         $job->{'notifications'} = [{ url => $email, event => 'FINISHED' }];
     }
-    #say dump($job);
+    say 'job = ', dump($job);
 
     my $url    = 'https://agave.iplantc.org/jobs/v2';
     my $ua     = Mojo::UserAgent->new;
     my $res    = $ua->post(
                  $url => { Authorization => "Bearer $token" } => json => $job
                  )->res;
+    say 'result = ', dump($res);
     my $result = decode_json($res->body);
+    say 'result = ', dump($result);
 
     if (my $user = $self->session->{'user'}) {
         my $schema    = $self->db->schema;
@@ -82,8 +94,19 @@ sub launch {
         });
     }
 
-    $self->layout('default');
-    $self->render(app_id => $app_id, result => $result);
+    $self->respond_to(
+        html => sub {
+            $self->render(app_id => $app_id, result => $result);
+        },
+
+        json => sub {
+            $self->render( json => $result );
+        },
+
+        txt => sub {
+            $self->render( text => dump($result) );
+        },
+    );
 }
 
 # ----------------------------------------------------------------------
