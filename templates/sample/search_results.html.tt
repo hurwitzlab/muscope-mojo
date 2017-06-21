@@ -1,3 +1,4 @@
+[% IF samples.size > 0 %]
 <div class="row">
   <h2 id="nav-tabs">Results: [% samples.size %]</h2>
   <div class="pull-right">
@@ -17,21 +18,26 @@
         <th><input id="toggler" type="checkbox" onclick="toggleAll()"></th>
         <th>Sample</th>
         <th>Cruise</th>
-        {{#each search_fields_pretty}}
-          <th>{{this}}</th>
-        {{/each}}
+        [% FOREACH field IN search_fields_pretty %]
+            [% NEXT IF fld.match('cruise|sample|cruise_id|sample_id') %]
+          <th>[% field %]</th>
+        [% END %]
       </tr>
     </thead>
     <tbody>
-      {{#each samples}}
+      [% FOREACH sample IN samples %]
         <tr>
-          <td><input name="sample_id[]" type="checkbox" value="{{this.Sample__sample_id}}"></td>
-          <td><a target="_blank" href="/sample/view/{{this.Sample__sample_id}}">{{this.Sample__sample_name}}</a></td>
-          <td><a target="_blank" href="/cruise/view/{{this.Sample__cruise_id}}">{{this.Sample__cruise_name}}</a></td>
-          {{#each this.search_values}}
-            <td>{{this}}</td>
-          {{/each}}
-      {{/each}}
+          <td><input name="sample_id[]" type="checkbox" value="[% sample.sample_id %]"></td>
+          <td><a target="_blank" href="/sample/view/[% sample.sample_ids %]">[% sample.sample_name %]</a></td>
+          <td><a target="_blank" href="/cruise/view/[% sample.cruise_id %]">[% sample.cruise_name %]</a></td>
+          [% FOREACH fld IN search_fields %]
+            [% NEXT IF fld.match('cruise|sample|cruise_id|sample_id') %]
+            <td>[% sample.$fld %]</td>
+          [% END %]
+      [% END %]
     </tbody>
   </table>
 </div>
+[% ELSE %]
+  No results.
+[% END %]

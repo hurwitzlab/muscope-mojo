@@ -1,0 +1,16 @@
+<h1>Sample File</h1>
+
+<table class="table">
+  <tr>
+    <th>Sample</th>
+    <td><a href="/sample/view/[% sample_file.sample_id %]">[% sample_file.sample.sample_name %]</a></td>
+  </tr>
+  <tr>
+    <th>File</th>
+    <td>[% sample_file.file %]</td>
+  </tr>
+  <tr>
+    <th>Type</th>
+    <td>[% sample_file.sample_file_type.type %]</td>
+  </tr>
+</table>

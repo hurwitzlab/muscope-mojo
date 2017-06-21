@@ -29,6 +29,11 @@ $(document).ready(function() {
           </div>
 
           <div class="form-group">
+            <label for="protocol">Protocol</label><br/>
+            <input id="protocol" name="protocol" value="[% app.protocol %]"/>
+          </div>
+
+          <div class="form-group">
             <label for="is_active">Is Active?</label><br/>
             <input type="radio" name="is_active" id="is_active" value="1" [% IF app.is_active == 1; 'checked'; END %]> Yes<br/>
             <input type="radio" name="is_active" id="is_active" value="0" [% IF app.is_active == 0; 'checked'; END %]> No

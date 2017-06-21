@@ -151,7 +151,7 @@ function initialize() {
 
 $(document).ready(function() {
   google.maps.event.addDomListener(window, "load", initialize);
-  $(".youtube").YouTubeModal({autoplay:0, width:640, height:480});
+  //$(".youtube").YouTubeModal({autoplay:0, width:640, height:480});
 });
 </script>
 

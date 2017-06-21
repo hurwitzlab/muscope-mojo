@@ -39,14 +39,9 @@ sub edit {
     $self->render( 
         title         => 'Edit Sample',
         sample        => $Sample,
-        filter_types  => $schema->resultset('FilterType')->search_rs,
-        sample_types  => $schema->resultset('SampleType')->search_rs,
-        library_kits  => $schema->resultset('LibraryKit')->search_rs,
         investigators 
             => $schema->resultset('Investigator')->search_rs({}, 
                { order_by => { -asc => [qw/last_name first_name/] } }),
-        sequencing_methods  
-            => $schema->resultset('SequencingMethod')->search_rs,
     );
 }
 

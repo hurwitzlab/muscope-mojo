@@ -63,62 +63,6 @@ $(document).ready(function() {
             [% END %]
           </div>
 
-          <div class="form-group">
-            <label for="filter_type_id">Filter Type</label><br/>
-            [% IF filter_types.count > 0 %]
-              <select type="text" name="filter_type_id" id="filter_type_id">
-                <option value="">--Select--</option>
-                [% WHILE (ft=filter_types.next) %]
-                  <option value="[% ft.id %]"[% IF ft.id == sample.filter_type_id %] selected[% END %]>[% ft.filter_type %]</option>
-                [% END %]
-              </select>
-            [% ELSE %]
-              No filter types.
-            [% END %]
-          </div>
-
-          <div class="form-group">
-            <label for="sample_type_id">Sample Type</label><br/>
-            [% IF sample_types.count > 0 %]
-              <select type="text" name="sample_type_id" id="sample_type_id">
-                <option value="">--Select--</option>
-                [% WHILE (ft=sample_types.next) %]
-                  <option value="[% ft.id %]"[% IF ft.id == sample.sample_type_id %] selected[% END %]>[% ft.sample_type %]</option>
-                [% END %]
-              </select>
-            [% ELSE %]
-              No sample types.
-            [% END %]
-          </div>
-
-          <div class="form-group">
-            <label for="sequencing_method_id">Sequencing Method</label><br/>
-            [% IF sequencing_methods.count > 0 %]
-              <select type="text" name="sequencing_method_id" id="sequencing_method_id">
-                <option value="">--Select--</option>
-                [% WHILE (meth=sequencing_methods.next) %]
-                  <option value="[% meth.id %]"[% IF meth.id == sample.sequencing_method_id %] selected[% END %]>[% meth.sequencing_method %]</option>
-                [% END %]
-              </select>
-            [% ELSE %]
-              No sequencing methods.
-            [% END %]
-          </div>
-
-          <div class="form-group">
-            <label for="library_kit_id">Library Kit</label><br/>
-            [% IF library_kits.count > 0 %]
-              <select type="text" name="library_kit_id" id="library_kit_id">
-                <option value="">--Select--</option>
-                [% WHILE (lk=library_kits.next) %]
-                  <option value="[% lk.id %]"[% IF lk.id == sample.library_kit_id %] selected[% END %]>[% lk.library_kit %]</option>
-                [% END %]
-              </select>
-            [% ELSE %]
-              No library kits.
-            [% END %]
-          </div>
-
           <div class="text-center form-group">
             <input type="hidden" name="sample_id" value="[% sample.id %]">
             <button type="submit" class="btn btn-primary">Update</button>

@@ -15,3 +15,4 @@ requires 'Template';
 requires 'Template::Plugin::Comma';
 requires 'Mojolicious::Plugin::JSONConfig';
 requires 'Mojolicious::Plugin::TtRenderer';
+requires 'Captcha::reCAPTCHA' => 0.99;

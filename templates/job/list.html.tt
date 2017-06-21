@@ -12,7 +12,6 @@ $(document).ready(function() {
 });
 </script>
 
-[% USE Dumper %]
 [% jobs = result.result %]
 <h1>Job List ([% jobs.size %])</h1>
 <table class="table" id="jobs-tbl">
@@ -20,6 +19,7 @@ $(document).ready(function() {
     <tr>
       <th>App ID</th>
       <th>Job ID</th>
+      <th>Name</th>
       <th>Status</th>
       <th>Created</th>
       <th>Finished</th>
@@ -31,6 +31,7 @@ $(document).ready(function() {
     <tr>
       <td>[% job.appId %]</td>
       <td>[% job.id %]</td>
+      <td>[% job.name %]</td>
       <td>[% job.status %]</td>
       <td>[% job.created %]</td>
       <td>[% job.endTime %]</td>

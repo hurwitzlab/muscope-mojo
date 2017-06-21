@@ -35,7 +35,7 @@ sub list {
     my $self   = shift;
     my $schema = $self->db->schema;
     my $Invs   = $schema->resultset('Investigator')->search(
-        { investigator_id => { '>', '1' } }
+        { investigator_id => { '>', '1' } } # skip "Unknown"
     );
     my $data   = sub { map { {$_->get_inflated_columns()} } $Invs->all() };
 

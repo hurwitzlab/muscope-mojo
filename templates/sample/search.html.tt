@@ -1,6 +1,5 @@
 <script type = "text/javascript">
 var paramType = {};
-var paramValues = {};
 
 $(document).ready(function() {
   $("#paramForm").on( "submit", function(event) {
@@ -33,11 +32,7 @@ function addToCart() {
   if (vals.length > 0) {
     $.post('/cart/add', { item: vals.join(',') })
      .fail(function() { alert( "error adding to cart" ) })
-     .success(function() { 
-      //var n = vals.length;
-      //alert("Added " + n + " sample" + (n == 1 ? '' : 's') + " to cart")
-      updateCart();
-    });
+     .success(function() { updateCart() });
   }
   else {
     alert('Please select some samples.');
@@ -50,14 +45,10 @@ function updateCart() {
 }
 
 // --------------------------------------------------
-function loadSearchParams(keys) {
+function loadSearchParams(data) {
   if (typeof(keys) == 'undefined') {
-    keys = [];
+    data = [];
   }
-
-  var limit = keys.reduce(
-      function(hash, elem, idx) { hash[elem] = idx++; return hash }, {}
-  );
 
   $('#searchList').empty();
   $('#searchList')
@@ -65,19 +56,26 @@ function loadSearchParams(keys) {
     .attr("value", "")
     .text("--Select--")); 
 
-  $.get("/sample/search_params.json", function(data) {
-    $.each(data, function(key, value) {   
-      var pname = value[0];
-      var ptype = value[1];
-      var punit = value[2];
-      paramType[pname] = { type: ptype, unit: punit };
+  if (data.length > 0) {
+    
+  }
+  else {
+    $.get("/sample/search_params.json", function(data) {
+      $.each(data, function(key, value) {   
+        var pname = value.name;
+        var ptype = value.type;
+        var punit = value.unit;
+        paramType[pname] = { type: ptype, unit: punit };
 
-      $('#searchList')
-        .append($("<option>")
-        .attr("value", pname)
-        .text(prettyStr(pname.replace('__', ':_')))); 
-    });    
-  });
+        $('#searchList')
+          .append($("<option>")
+            .attr("value", pname)
+            .text(prettyStr(pname))
+          );
+      });    
+      $('#searchList').chosen();
+    });
+  }
 }
 
 // --------------------------------------------------
@@ -95,16 +93,17 @@ function setParamValues(paramName, divId, datatype) {
     return false;
   }
 
-  f = function (data) {
+
+  $.get('/sample/search_param_values/' + paramName + '.json?', function (data) {
     html = '';
     if (typeof(data) == 'undefined') {
       html = 'Error getting values for param ' + paramName;
     }
     else {
       if (datatype == 'number') {
-        html = '<td>Min: <input name="min_' + paramName 
+        html = '<td>Min: <input name="min__' + paramName 
              + '" value="' + data[0] + '"/></td>'
-             +  '<td>Max: <input name="max_' + paramName 
+             +  '<td>Max: <input name="max__' + paramName 
              + '" value="' + data[data.length - 1] + '"/></td>';
       }
       else if (data.length > 0 && data.length < 100) {
@@ -123,14 +122,7 @@ function setParamValues(paramName, divId, datatype) {
     if (html) {
       $('#' + divId).append(html);
     }
-  }
-
-  if (paramName in paramValues) {
-    f(Object.keys(paramValues[paramName]).sort());
-  }
-  else {
-    $.get('/sample/search_param_values/' + paramName + '.json?', f);
-  }
+  });
 }
 
 // --------------------------------------------------
@@ -166,8 +158,9 @@ function updateSearchResults(formData) {
 
     //console.log('formData = ' + JSON.stringify(formData));
     $.get('/sample/search_results.json?' + formData,
-      function(data) {
-        //console.log('return data = ' + JSON.stringify(data));
+      //function(html) { $('#results').html(html) }
+      function(data) { 
+        console.log('search data = ' + JSON.stringify(data));
         if (data["samples"].length > 0 ) {
           data['count'] = data['samples'].length;
           var template  = Handlebars.templates['search-results'];
@@ -180,25 +173,7 @@ function updateSearchResults(formData) {
             "bFilter": false
           });
 
-          var keys = _.filter(
-            _.uniq(_.flatten(data['samples'].map(Object.keys))),
-            function (str) { return str.indexOf('__') > 0 }
-          );
-
-          paramValues = data['samples'].reduce(
-            function(hash, obj, idx) {
-              Object.keys(obj).map(function (key, i, arr) {
-                if (typeof(hash[key]) == 'undefined') {
-                  hash[key] = {};
-                }
-                value = obj[key];
-                hash[key][value] = 1;
-              });
-              return hash
-            }, {}
-          );
-
-          loadSearchParams(keys);
+          loadSearchParams(data.param_values);
         }
         else {
           $('#results').html('<div class="well text-center">No results</div>');
@@ -217,7 +192,7 @@ function updateSearchResults(formData) {
 <form id="paramForm">
   <div class="text-center">
     <b>Add Condition:</b>
-    <select id="searchList" onchange="addOption(this.value)">
+    <select id="searchList" class="chosen-select" onchange="addOption(this.value)">
     </select>
   </div>
   <table class="table" id="paramTable">
@@ -227,3 +202,42 @@ function updateSearchResults(formData) {
 </form>
 
 <div id="results"></div>
+<script type="text/x-tmpl" id="result-tmpl">
+  <div class="row">
+    <h2 id="nav-tabs">Results: {%=o.count%}</h2>
+    <div class="pull-right">
+      <a class="btn btn-default" href="/sample/search_results_map?{{formData}}" target="_blank">View On Map</a>
+      <a class="btn btn-default" data-toggle="collapse" href="#permalink" aria-expanded="false" aria-controls="permalink">Permalink</a>
+      <a class="btn btn-default" href="/sample/search_results.tab?{{formData}}&download=1" target="_blank">Download</a>
+      <a class="btn btn-default" onclick="addToCart()">Add To Cart</a>
+      <div class="collapse" id="permalink">
+        <div class="well">
+          <a href="/sample/search?{{formData}}">/sample/search_results_map?{{formData}}</a>
+        </div>
+      </div>
+    </div>
+    <table id="samples-tbl" class="table" cellspacing="0" width="100%">
+      <thead>
+        <tr>
+          <th><input id="toggler" type="checkbox" onclick="toggleAll()"></th>
+          <th>Sample</th>
+          <th>Cruise</th>
+          {{#each search_fields_pretty}}
+            <th>{{this}}</th>
+          {{/each}}
+        </tr>
+      </thead>
+      <tbody>
+        {{#each samples}}
+          <tr>
+            <td><input name="sample_id[]" type="checkbox" value="{{this.sample_id}}"></td>
+            <td><a target="_blank" href="/sample/view/{{this.sample_id}}">{{this.sample_name}}</a></td>
+            <td><a target="_blank" href="/cruise/view/{{this.cruise_id}}">{{this.cruise_name}}</a></td>
+            {{#each this.search_values}}
+              <td>{{this}}</td>
+            {{/each}}
+        {{/each}}
+      </tbody>
+    </table>
+  </div>
+</script>

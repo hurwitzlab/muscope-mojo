@@ -116,6 +116,7 @@ $(document).ready(function() {
            <thead>
            <tr>
              <th>Name</th>
+             <th>Position</th>
              <th># Casts</th>
            </tr>
            </thead>
@@ -124,6 +125,13 @@ $(document).ready(function() {
            [% FOREACH station IN cruise.stations %]
              <tr>
                <td><a href="/station/view/[% station.id %]">[% station.station_number %]</a></td>
+               <td>
+                 [% IF station.latitude AND station.longitude %]
+                   ([% station.latitude %], [% station.longitude %])
+                 [% ELSE %]
+                   NA
+                 [% END %]
+               </td>
                <td>[% station.casts_rs.count OR '0' %]</td>
              </tr>
            [% END %]

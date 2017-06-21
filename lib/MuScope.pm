@@ -212,6 +212,8 @@ sub startup {
 
     $r->get('/app/list')->to('app#list');
 
+    $auth->post('/app/file_upload')->to('app#file_upload');
+
     $r->get('/index')->to('welcome#index');
 
     $r->get('/download')->to('download#format');
@@ -250,8 +252,6 @@ sub startup {
 
     $r->get('/cruise/view/:cruise_id')->to('cruise#view');
 
-    $r->get('/filter_type/view/:filter_type_id')->to('filter_type#view');
-
     $r->get('/investigator/list')->to('investigator#list');
 
     $r->get('/investigator/view/:investigator_id')->to('investigator#view');
@@ -259,8 +259,6 @@ sub startup {
     $auth->get('/job/list')->to('job#list');
 
     $auth->get('/job/view/:job_id')->to('job#view');
-
-    $r->get('/library_kit/view/:library_kit_id')->to('library_kit#view');
 
     $auth->get('/login')->to('login#login');
 
@@ -290,13 +288,11 @@ sub startup {
 
     $r->get('/sample/view/:sample_id')->to('sample#view');
 
-    $r->get('/sample_type/view/:sample_type_id')->to('sample_type#view');
+    $r->get('/sample_file/view/:sample_file_id')->to('sample_file#view');
 
     $r->get('/search')->to('search#results');
 
     $r->get('/search/info')->to('search#info');
-
-    $r->get('/sequencing_method/view/:sequencing_method_id')->to('sequencing_method#view');
 
     $r->get('/station/list/:cruise_id')->to('station#list');
 
@@ -345,11 +341,16 @@ sub startup {
         }
     );
 
+    my $db;
     $self->helper(
         db => sub {
             my $self   = shift;
             my $config = $self->config;
             return MuScope::DB->new($config->{'db'});
+            #if (!$db || !$db->ping) {
+            #    $db = MuScope::DB->new($config->{'db'});
+            #}
+            #return $db;
         }
     );
 

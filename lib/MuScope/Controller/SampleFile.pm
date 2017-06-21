@@ -1,4 +1,4 @@
-package MuScope::Controller::SampleType;
+package MuScope::Controller::SampleFile;
 
 use Mojo::Base 'Mojolicious::Controller';
 use Data::Dump 'dump';
@@ -6,28 +6,28 @@ use Data::Dump 'dump';
 # ----------------------------------------------------------------------
 sub view {
     my $self           = shift;
-    my $sample_type_id = $self->param('sample_type_id');
-    my $SampleType 
-      = $self->db->schema->resultset('SampleType')->find($sample_type_id)
-      or return $self->reply->exception("Bad sample_type id ($sample_type_id)");
+    my $sample_file_id = $self->param('sample_file_id');
+    my $SampleFile 
+      = $self->db->schema->resultset('SampleFile')->find($sample_file_id)
+      or return $self->reply->exception("Bad sample_file id ($sample_file_id)");
 
     $self->respond_to(
         json => sub {
-            $self->render( json => { $SampleType->get_inflated_columns } );
+            $self->render( json => { $SampleFile->get_inflated_columns } );
         },
 
         html => sub {
             $self->layout('default');
 
             $self->render(
-                title  => sprintf("Sample Type: %s", $SampleType->sample_type),
-                sample_type => $SampleType,
+                title  => sprintf("Sample File: %s", $SampleFile->file),
+                sample_file => $SampleFile,
             );
         },
 
         txt => sub {
             $self->render( text => dump({
-                sample_type => { $SampleType->get_inflated_columns() },
+                sample_file => { $SampleFile->get_inflated_columns() },
             }))
         },
     );

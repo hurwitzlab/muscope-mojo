@@ -25,18 +25,6 @@ var map;
 function initialize() {
     map = new google.maps.Map(document.getElementById("map-canvas"), {zoom: 4});
 
-    var aloha_marker = new google.maps.Marker({
-        position: new google.maps.LatLng(22.45, -158),
-        title: 'Station Aloha',
-        map: map,
-    });
-
-    var aloha_infowindow = new google.maps.InfoWindow({content: 'Station Aloha'});
-
-    google.maps.event.addListener(aloha_marker, 'click', function() {
-      aloha_infowindow.open(map, aloha_marker);
-    });
-
     var marker = new google.maps.Marker({
         position: new google.maps.LatLng([% latitude %], [% longitude %]),
         title: '[% sample.sample_name %]',
@@ -51,7 +39,7 @@ function initialize() {
       infowindow.open(map, marker);
     });
 
-    map.setCenter(aloha_marker.position);
+    map.setCenter(marker.position);
 }
 
 $(document).ready(function() {
@@ -92,16 +80,6 @@ $(document).ready(function() {
             <td>[% sample.seq_name %]</td>
           </tr>
           <tr>
-            <th>Sample Type</th>
-            <td>
-              [% IF sample.sample_type %]
-                <a href="/sample_type/view/[% sample.sample_type_id %]">[% sample.sample_type.sample_type %]</a>
-              [% ELSE %]
-                NA
-              [% END %]
-            </td>
-          </tr>
-          <tr>
             <th>Investigator</th>
             <td>
               <a href="/investigator/view/[% sample.investigator.id %]">[% sample.investigator.first_name %] [% sample.investigator.last_name %]</a>
@@ -116,13 +94,19 @@ $(document).ready(function() {
           <tr>
             <th>Station</th>
             <td>
-              <a href="/station/view/[% sample.cast.station.id %]">[% sample.cast.station.station_number %]</a>[% IF sample.cast.station.latitude AND sample.cast.station.longitude %] ([% sample.cast.station.longitude %], [% sample.cast.station.latitude %])[% END %]
+              <a href="/station/view/[% sample.cast.station.id %]">[% sample.cast.station.station_number %]</a>[% IF sample.cast.station.latitude AND sample.cast.station.longitude %] ([% sample.cast.station.latitude %], [% sample.cast.station.longitude %])[% END %]
             </td>
           </tr>
           <tr>
             <th>Cast</th>
             <td>
               <a href="/cast/view/[% sample.cast.id %]">[% sample.cast.cast_number %]</a>
+            </td>
+          </tr>
+          <tr>
+            <th>Depth</th>
+            <td>
+              [% sample.depth OR 'NA' %]
             </td>
           </tr>
           <tr>
@@ -137,36 +121,6 @@ $(document).ready(function() {
               [% ELSE %] 
                 NA
               [% END %] 
-            </td>
-          </tr>
-          <tr>
-            <th>Filter Type</th>
-            <td>
-              [% IF sample.filter_type %]
-                <a href="/filter_type/view/[% sample.filter_type.id %]">[% sample.filter_type.filter_type %]</a>
-              [% ELSE %]
-                NA
-              [% END %]
-            </td>
-          </tr>
-          <tr>
-            <th>Seq. Method</th>
-            <td>
-              [% IF sample.sequencing_method %]
-                <a href="/sequencing_method/view/[% sample.sequencing_method.id %]">[% sample.sequencing_method.sequencing_method %]</a>
-              [% ELSE %]
-                NA
-              [% END %]
-            </td>
-          </tr>
-          <tr>
-            <th>Lib. Kit</th>
-            <td>
-              [% IF sample.library_kit %]
-                <a href="/library_kit/view/[% sample.library_kit.id %]">[% sample.library_kit.library_kit %]</a>
-              [% ELSE %]
-                NA
-              [% END %]
             </td>
           </tr>
         </table>
@@ -201,7 +155,7 @@ $(document).ready(function() {
         <table class="table" id="data-tbl">
           <thead>
             <tr>
-              <th>Type</th>
+              <th>Data Type</th>
               <th>File</th>
             </tr>
           </thead>
@@ -209,7 +163,13 @@ $(document).ready(function() {
           [% FOREACH file IN sample.sample_files %]
             <tr>
               <td>[% file.sample_file_type.type %]</td>
-              <td>[% file.file %]</td>
+              <td>
+                [% IF 0 # file.file.match('/iplant') %]
+                  <a href="http://datacommons.cyverse.org/browse[% file.file %]">[% file.file %]</a>
+                [% ELSE %]
+                  [% file.file %]
+                [% END %]
+              </td>
             </tr>
           [% END %]
           </tbody>

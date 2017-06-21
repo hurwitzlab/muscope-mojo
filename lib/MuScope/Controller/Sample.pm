@@ -3,6 +3,7 @@ package MuScope::Controller::Sample;
 use Mojo::Base 'Mojolicious::Controller';
 use Data::Dump 'dump';
 use String::Trim qw(trim);
+use List::Util qw'all uniq';
 
 # ----------------------------------------------------------------------
 #sub info {
@@ -163,13 +164,15 @@ sub search_param_values {
        key      => $field,
        query    => {}
     ]);
-    my %param_types = map { $_->[0], $_->[1] } $self->_search_params();
-    my $type = $param_types{ $field } || '';
+
+    my %param_types = map { $_->{'name'}, $_->{'type'} } 
+                      $self->_search_params();
+    my $type        = $param_types{ $field } || '';
 
     my @values;
     if ($result->{'ok'}) {
         my $by  = $type eq 'number' ? sub { $a <=> $b } : sub { $a cmp $b };
-        @values = sort $by @{ $result->{'values'} };
+        @values = uniq(sort $by @{ $result->{'values'} });
     }
 
     $self->respond_to(
@@ -191,23 +194,25 @@ sub _search_params {
     my $mongo = $db->mongo;
     my $mdb   = $mongo->get_database('muscope');
     my $coll  = $mdb->get_collection('sampleKeys');
+    my %unit  = map { @$_ } @{ $dbh->selectall_arrayref(
+        'select type, unit from sample_attr_type', {}
+    ) };
+
     my @types;
     for my $ref (
-        sort { $a->[0] cmp $b->[0] }
+        sort { lc $a->[0] cmp lc $b->[0] }
         grep { $_->[0] ne '_id' }
         grep { $_->[0] !~ /(\.floatApprox|\.bottom|\.top|text|none)/i }
         map  { [$_->{'_id'}{'key'}, lc $_->{'value'}{'types'}[0]] }
         $coll->find->all()
     ) {
-        my ($name, $type) = @$ref;
-        my $unit = '';
-        if ( $name =~ /^(?:core|ctd)__(.+)/i ) {
-            my $ctd_type = $1;
-            $unit = $dbh->selectrow_array(
-                'select unit from sample_attr_type where type=?', {}, $ctd_type
-            );
-        }
-        push @types, [$name, $type, $unit];
+        my ($name, $data_type) = @$ref;
+
+        push @types, { 
+            name => $name, 
+            type => $data_type, 
+            unit => $unit{ $name } || '' 
+        };
     }
 
     return @types;
@@ -231,17 +236,21 @@ sub search_params {
 
 # ----------------------------------------------------------------------
 sub search_results {
-    my $self        = shift;
-    my $db          = $self->db;
-    my $dbh         = $db->dbh;
-    my $mongo       = $db->mongo;
-    my $mdb         = $mongo->get_database('muscope');
-    my $coll        = $mdb->get_collection('sample');
-    my @param_types = $self->_search_params();
+    my $self         = shift;
+    my $db           = $self->db;
+    my $dbh          = $db->dbh;
+    my $mongo        = $db->mongo;
+    my $mdb          = $mongo->get_database('muscope');
+    my $coll         = $mdb->get_collection('sample');
+    my @param_types  = $self->_search_params();
+    my @include_flds = split(/\s*,\s*/, $self->param('include_fields') || '');
+    my %param_type   = @param_types;
 
     my %search;
     for my $ptype (@param_types) {
-        my ($name, $type) = @$ptype;
+        my $name = $ptype->{'name'};
+        my $type = $ptype->{'type'};
+
         if (my @vals = 
             map { split /\s*,\s*/ } @{ $self->every_param($name) || [] }
         ) {
@@ -253,11 +262,15 @@ sub search_results {
             }
         }
         else {
-            my $min = $self->param('min_'.$name);
-            my $max = $self->param('max_'.$name);
+            my $min = $self->param('min__'.$name);
+            my $max = $self->param('max__'.$name);
 
             next unless (defined $min && $min ne '')
                      || (defined $max && $max ne '');
+
+            if ($max < $min) {
+                ($min, $max) = ($max, $min);
+            }
 
             if ($min == $max) {
                 $search{$name}{'$eq'} = $min;
@@ -274,46 +287,44 @@ sub search_results {
         }
     }
 
-    my (@samples, @search_params);
+    my @search_fields = sort keys %search;
+    my @pretties;
+    for my $fld (@search_fields) {
+        push @pretties, join(' ', map { ucfirst($_) } split(/_/, $fld));
+    }
+
+    my (@samples, %params);
     if (%search) {
-        @search_params = map { s/^(max|min)_//; $_ } keys %search;
-        my @return_fields; 
-
-        if ($self->param('download')) {
-            @return_fields = map { $_->[0] } $self->_search_params;
-        }
-        else {
-            @return_fields = (
-                'Sample__cruise_id', 
-                'Sample__cruise_name',
-                'Sample__sample_id',
-                'Sample__sample_name', 
-                'Cast__latitude', 
-                'Cast__longitude',
-                @search_params
-            );
-        }
-
-        my %fields = map { $_, 1 } @return_fields;
-        my $cursor = $coll->find(\%search); #->fields(\%fields);
+        my $cursor = $coll->find(\%search); 
 
         for my $sample ($cursor->all) {
+            for my $key (keys %$sample) {
+                next if $key =~ /^(_id|text)$/;
+                $params{ $key }{ $sample->{ $key } }++;
+            }
+
             $sample->{'search_values'} = [
-                map { $sample->{ $_ } } @search_params
+                map { $sample->{ $_ } } @search_fields
             ];
 
             push @samples, $sample;
         }
     }
 
+    my %param_vals;
+    for my $key (keys %params) {
+        my $type = $param_type{ $key } || '';
+        my $by   = $type eq 'number' ? sub { $a <=> $b } : sub { $a cmp $b };
+        $param_vals{ $key } = [sort $by keys %{ $params{$key} }];
+    }
+
     $self->respond_to(
         json => sub {
             $self->render( json      => { 
                 samples              => \@samples, 
-                search_fields        => \@search_params,
-                search_fields_pretty => [
-                    map { s/__/: /; s/_/ /g; ucfirst($_) } @search_params
-                ],
+                search_fields        => \@search_fields,
+                search_fields_pretty => \@pretties,
+                param_values         => \%param_vals,
             });
         },
 
@@ -348,7 +359,7 @@ sub map_search_results {
     my $dbh  = $self->db->dbh;
     my $sql  = q'
         select cr.cruise_id, cr.cruise_name, 
-               i.investigator_id, i.investigator_name,
+               i.investigator_id, i.last_name,
                s.sample_id, s.sample_name, st.latitude, st.longitude
         from   sample s, cast c, station st, cruise cr, investigator i
         where  s.investigator_id=i.investigator_id

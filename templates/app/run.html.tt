@@ -6,14 +6,15 @@ function fileBrowser(evt, elemId) {
   $('#browser-container').modal();
   $('#browser').html('Loading...');
   browser = new AgaveFileBrowser({
-    elementId: "browser",
-    userName:  "[% user.username %]",
-    authToken: "[% token.access_token %]",
-    baseUrl:   "https://agave.iplantc.org/files/v2/listings"
+    elementId:   "browser",
+    path:        "[% user.username %]",
+    authToken:   "[% token.access_token %]",
+    baseUrl:     "https://agave.iplantc.org/files/v2/listings",
+    busyIconUrl: "/js/bower_components/agave-file-browser/spinner.gif"
   });
 
   $('#input-select').click(function() {
-    let selected = browser.get_selected_nodes();
+    let selected = browser.getSelectedNodes();
     if (selected.length > 0) {
       $('#' + elemId).val(selected[0].id);
       $('#browser-container').modal('hide');
@@ -21,6 +22,7 @@ function fileBrowser(evt, elemId) {
   })
 }
 
+// --------------------------------------------------
 function cartBrowser(evt, elemId) {
   evt.preventDefault();
   $('#browser-container').modal();
@@ -55,6 +57,7 @@ function cartBrowser(evt, elemId) {
   });
 }
 
+// --------------------------------------------------
 $(function() {
   $('form').on('submit', function (event) {
     event.preventDefault();
@@ -66,10 +69,37 @@ $(function() {
      .done(function (html) { $('#launcher-status').html(html) })
     ;
   });
+
+  $("input:file").each(function (index, item) {
+    console.log('id = ' + item.id);
+    $('#' + item.id).fileupload({
+      dataType: 'json',
+      add: function (e, data) {
+        console.log('adding');
+        console.log(data);
+        $(this).fileupload('option', { formData: {
+          input_name: data.paramName,
+        }});
+        data.submit();
+      },
+      done: function(e, data) {
+        console.log('done');
+        console.log(data);
+        var result = data.result;
+        if (result.status == 'success') {
+          var formElement = item.id.replace('fileupload-', '');
+          $('#' + formElement).val(data.result.result.path);
+        }
+        else {
+          alert("Error uploading file");
+        }
+      }
+    });
+  });
 });
 </script>
 
-<h1>[% app.id %]</h1>
+<h1>[% app.label OR app.id %]</h1>
 
 <form id="form">
 <table class="table">
@@ -81,6 +111,27 @@ $(function() {
     <th>Description</th>
     <td>[% app.longDescription OR app.shortDescription OR 'NA' %]</td>
   </tr>
+  [% IF app.helpURI %]
+    <tr>
+      <th>Help</th>
+      <td><a href="[% app.helpURI %]">[% app.helpURI %]</a></td>
+    </tr>
+  [% END %]
+  [% IF protocol %]
+    <tr>
+      <th>Protocol</th>
+      <td><a href="[% protocol %]"><span class="glyphicon glyphicon-question-sign"></span></a></td>
+  [% END %]
+  [% IF app.tags.size > 0 %]
+    <tr>
+      <th>Tags</th>
+      <td>[% app.tags.join(', ') %]</td>
+    </tr>
+  [% END %]
+  <tr>
+    <th>Job Name</th>
+    <td><input type="text" name="job_name" value="[% job_name %]"></td>
+  </tr>
   [% IF app.inputs.size > 0 %]
     <tr>
       <th colspan="2">Inputs</th>
@@ -90,6 +141,7 @@ $(function() {
       <th>[% input.details.label OR input.id %]</th>
       <td>
         <input name="[% input.id %]" id="[% input.id %]">
+        <input class="btn btn-default" name="fileupload-[% input.id %]" id="fileupload-[% input.id %]" type="file" data-url="/app/file_upload.json" />
         <button class="btn btn-default" onclick="fileBrowser(event, '[% input.id %]')">Cyverse</button>
         <button class="btn btn-default"[% IF c.session.items.size == 0; ' disabled'; END %] onclick="cartBrowser(event, '[% input.id %]')">Cart ([% c.session.items.size OR '0' %])</button>
       </td>
@@ -131,6 +183,7 @@ $(function() {
         <div id="browser"></div>
       </div>
       <div class="modal-footer">
+
         <button type="button" class="btn btn-primary" id="input-select">Select</button>
         <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
       </div>

@@ -23,9 +23,6 @@ function copy() {
 [% IF files.size > 0 %]
   <div class="pull-right">
   <a alt="Download" href="/download?url=[% c.req.url %]"><span class="glyphicon glyphicon-download-alt" aria-hidden="true"></span></a>
-  <button type="button" class="btn btn-default"  aria-label="Copy To Clipboard" onclick="copy()">
-    <span class="glyphicon glyphicon-copy" aria-hidden="true"></span>
-  </button>
   </div>
   <table id="samples-tbl" class="table">
     <thead>

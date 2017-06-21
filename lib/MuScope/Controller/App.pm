@@ -3,13 +3,54 @@ package MuScope::Controller::App;
 use Mojo::Base 'Mojolicious::Controller';
 use Data::Dump 'dump';
 use JSON::XS qw'encode_json decode_json';
+use File::Temp qw'tempfile tempdir';
+use File::Spec::Functions 'catfile';
 
 sub _fix_inputs {
     my $path  = shift or return '';
 
     return 
-      map { $_ =~ s{^/iplant/home/}{agave://data.iplantcollaborative.org/} }
+      join ';',
+      map { $_ =~ s{^/iplant/home/}{agave://data.iplantcollaborative.org/}; $_ }
       split(';', $path);
+}
+
+# ----------------------------------------------------------------------
+sub file_upload {
+    my $self  = shift;
+    my $token = $self->session->{'token'};
+    my $user  = $self->session->{'user'};
+
+    say 'FILE_UPLOAD';
+    if (my $name = $self->param('input_name')) {
+        my $upload = $self->req->upload($name);
+        my $url = 'https://agave.iplantc.org/files/v2/media/' 
+                . $user->{'username'};
+        my $ua  = Mojo::UserAgent->new;
+        my $res = $ua->post(
+            $url => { 'Authorization' => "Bearer $token->{access_token}" } => 
+            form => { 
+                fileToUpload => { file => $upload->asset },
+                fileName     => $upload->filename, 
+                fileType     => 'raw-0',
+            }
+        )->res;
+        say 'res = ', dump($res);
+        my $json = decode_json($res->body);
+        say dump($json);
+        $self->respond_to(
+            json => sub {
+                $self->render( json => $json );
+            },
+
+            txt => sub {
+                $self->render( text => dump($json) );
+            },
+        );
+    }
+    else {
+        die "No 'input_name' param";
+    }
 }
 
 # ----------------------------------------------------------------------
@@ -25,45 +66,36 @@ sub launch {
 
     my @sample_ids = @{ $session->{'items'} || [] };
 
-    my $job = {};
-    (my $job_id = rand()) =~ s/^0\.//; # get a random string of numbers
-
     my $app_name = $App->app_name;
-    if ($app_name =~ /^muscope-mash/i) {
-        my @sample_names;
-        #
-        # This cannot be.  We can't silently take the names from 
-        # the cart.  The user must explicitly choose this.  How?
-        #
-#        for my $sample_id (@sample_ids) {
-#            my $Sample = $schema->resultset('Sample')->find($sample_id);
-#            push @sample_names, $Sample->sample_name;
-#        }
+    (my $job_id = rand()) =~ s/^0\.//; # get a random string of numbers
+    my $job = { 
+        name    => $self->param('job_name') || join('-', $app_name, $job_id),
+        appId   => $app_name,
+        archive => 'true'
+    };
 
+    if ($app_name =~ /^muscope-mash/i) {
         my $query = _fix_inputs($self->param('QUERY'));
 
-        $job = {
-            name       =>  "muscope-mash-$job_id",
-            appId      =>  $app_name,
-            archive    =>  'true',
-            inputs     => { QUERY => $query },
-            parameters => { SAMPLE_NAMES => join(',', @sample_names) }
-        }
+        $job->{'inputs'}     = { QUERY => $query };
+        #$job->{'parameters'} = { SAMPLE_NAMES => join(',', @sample_names) };
     }
     elsif ($app_name =~ /^muscope-b?last/i) {
         my $query  = _fix_inputs($self->param('QUERY')) or die "No QUERY\n";
         
         my $pct_id = $self->param('PCT_ID');
-        $job = {
-            name       =>  "$app_name-$job_id",
-            appId      =>  $app_name,
-            archive    =>  'true',
-            inputs     => { QUERY => $query },
-            parameters => { PCT_ID => $pct_id },
-        }
+        $job->{'inputs'}     = { QUERY => $query };
+        $job->{'parameters'} = { PCT_ID => $pct_id };
     }
     else {
-        die "Unknown app_name ($app_name)";
+        my %params = %{ $self->req->params->to_hash };
+        while (my ($key, $val) = each %params) {
+            if ($key =~ /^(input|param)-(.+)/) {
+                my ($type, $name) = ($1, $2);
+                my $cat = $type eq 'input' ? 'inputs' : 'parameters';
+                $job->{ $cat }{ $name } = $val;
+            }
+        }
     }
 
     if (my $email = $session->{'user'}{'email'}) {
@@ -76,9 +108,9 @@ sub launch {
     my $res    = $ua->post(
                  $url => { Authorization => "Bearer $token" } => json => $job
                  )->res;
-    say 'result = ', dump($res);
+    #say 'result = ', dump($res);
     my $result = decode_json($res->body);
-    say 'result = ', dump($result);
+    #say 'result = ', dump($result);
 
     if (my $user = $self->session->{'user'}) {
         my $schema    = $self->db->schema;
@@ -113,7 +145,7 @@ sub launch {
 sub list {
     my $self = shift;
     my $schema = $self->db->schema;
-    my @Apps   = $schema->resultset('App')->search;
+    my @Apps   = $schema->resultset('App')->search({ is_active => 1 });
     my $struct = sub { map { { $_->get_inflated_columns } } @Apps };
 
     $self->respond_to(
@@ -154,12 +186,16 @@ sub run {
         die $res->body;
     }
 
+    (my $job_id = rand()) =~ s/^0\.//; # get a random string of numbers
+
     $self->layout('default');
     $self->render(
-        app_id => $app_id,
-        app    => $result->{'result'}, 
-        token  => $token,
-        user   => $self->session->{'user'},
+        app_id   => $app_id,
+        app      => $result->{'result'}, 
+        protocol => $App->protocol,
+        token    => $token,
+        user     => $self->session->{'user'},
+        job_name => join('-', $App->app_name, $job_id),
     );
 }
 

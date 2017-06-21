@@ -72,7 +72,7 @@ sub update {
     my $App    = $self->db->schema->resultset('App')->find($app_id)
                     or die "Bad app id ($app_id)";
 
-    for my $fld (qw[is_active]) {
+    for my $fld (qw[is_active protocol]) {
         my $val = $self->param($fld);
         say "$fld = $val";
         next unless defined $val;

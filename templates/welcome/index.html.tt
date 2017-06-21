@@ -3,24 +3,39 @@
     <li data-target="#myCarousel" data-slide-to="0" class="active"></li>
     <li data-target="#myCarousel" data-slide-to="1"></li>
     <li data-target="#myCarousel" data-slide-to="2"></li>
+    <li data-target="#myCarousel" data-slide-to="3"></li>
+    <li data-target="#myCarousel" data-slide-to="4"></li>
+    <li data-target="#myCarousel" data-slide-to="5"></li>
   </ol>
   <div class="carousel-inner" role="listbox">
     <div class="item active">
       <div class="container text-center">
-        <img src="/img/logo.png">
+        <img src="/img/carousel/carousel_1.jpg" height="500">
       </div>
     </div>
     <div class="item">
       <div class="container text-center">
-        <img src="/img/station-aloha.png" height="500">
-        <div class="carousel-caption text-center">
-          <p><a class="btn btn-lg btn-primary" href="http://aco-ssds.soest.hawaii.edu/ALOHA/" role="button">Station ALOHA</a></p>
-        </div>
+        <img src="/img/carousel/carousel_2.jpg" height="500">
       </div>
     </div>
     <div class="item">
       <div class="container text-center">
-        <img src="/img/ctdlower1.jpg" height="500">
+        <img src="/img/carousel/carousel_3.jpg" height="500">
+      </div>
+    </div>
+    <div class="item">
+      <div class="container text-center">
+        <img src="/img/carousel/carousel_4.jpg" height="500">
+      </div>
+    </div>
+    <div class="item">
+      <div class="container text-center">
+        <img src="/img/carousel/carousel_5.jpg" height="500">
+      </div>
+    </div>
+    <div class="item">
+      <div class="container text-center">
+        <img src="/img/carousel/carousel_6.jpg" height="500">
       </div>
     </div>
   </div>

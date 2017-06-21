@@ -17,6 +17,8 @@
         <th><input id="toggler" type="checkbox" onclick="toggleAll()"></th>
         <th>Sample</th>
         <th>Cruise</th>
+        <th>Investigator</th>
+        <th>Type</th>
         {{#each search_fields_pretty}}
           <th>{{this}}</th>
         {{/each}}
@@ -25,9 +27,11 @@
     <tbody>
       {{#each samples}}
         <tr>
-          <td><input name="sample_id[]" type="checkbox" value="{{this.Sample__sample_id}}"></td>
-          <td><a target="_blank" href="/sample/view/{{this.Sample__sample_id}}">{{this.Sample__sample_name}}</a></td>
-          <td><a target="_blank" href="/cruise/view/{{this.Sample__cruise_id}}">{{this.Sample__cruise_name}}</a></td>
+          <td><input name="sample_id[]" type="checkbox" value="{{this.sample_id}}"></td>
+          <td><a target="_blank" href="/sample/view/{{this.sample_id}}">{{this.sample_name}}</a></td>
+          <td><a target="_blank" href="/cruise/view/{{this.cruise_id}}">{{this.cruise_name}}</a></td>
+          <td><a target="_blank" href="/investigator/view/{{this.investigator_id}}">{{this.investigator_name}}</a></td>
+          <td>{{this.sample_type}}</td>
           {{#each this.search_values}}
             <td>{{this}}</td>
           {{/each}}

@@ -12,8 +12,8 @@ function initialize() {
       function(data) { 
         console.log("data = " + JSON.stringify(data));
         $.each(data['samples'], function(i, sample) {
-          if (sample.location__latitude && sample.location__longitude) {
-            var pos = new google.maps.LatLng(sample.location__latitude, sample.location__longitude);
+          if (sample.latitude && sample.longitude) {
+            var pos = new google.maps.LatLng(sample.latitude, sample.longitude);
 
             console.log('add pos = ' + JSON.stringify(pos));
             var sample_name = sample.specimen__sample_name;
