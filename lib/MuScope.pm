@@ -110,31 +110,9 @@ sub startup {
     $r->post('/admin/investigator/insert')->to('admin-investigator#insert');
 
     #
-    # Station
-    #
-    $r->get('/admin/station/create/:cruise_id')->to('admin-station#create');
-
-    $r->get('/admin/station/edit/:station_id')->to('admin-station#edit');
-
-    $r->post('/admin/station/insert')->to('admin-station#insert');
-
-    $r->post('/admin/station/update')->to('admin-station#update');
-
-    #
-    # Cast
-    #
-    $r->get('/admin/cast/create/:station_id')->to('admin-cast#create');
-
-    $r->get('/admin/cast/edit/:cast_id')->to('admin-cast#edit');
-
-    $r->post('/admin/cast/insert')->to('admin-cast#insert');
-
-    $r->post('/admin/cast/update')->to('admin-cast#update');
-
-    #
     # Sample
     #
-    $r->get('/admin/sample/create/:cast_id')->to('admin-sample#create');
+    $r->get('/admin/sample/create/:cruise_id')->to('admin-sample#create');
 
     $r->get('/admin/sample/edit/:sample_id')->to('admin-sample#edit');
 
@@ -242,8 +220,6 @@ sub startup {
 
     $r->get('/cart/view')->to('cart#view');
 
-    $r->get('/cast/view/:cast_id')->to('cast#view');
-
     $r->get('/cruise/list')->to('cruise#list');
 
     $r->get('/cruise/info')->to('cruise#info');
@@ -293,10 +269,6 @@ sub startup {
     $r->get('/search')->to('search#results');
 
     $r->get('/search/info')->to('search#info');
-
-    $r->get('/station/list/:cruise_id')->to('station#list');
-
-    $r->get('/station/view/:station_id')->to('station#view');
 
     $self->hook(
         before_render => sub {

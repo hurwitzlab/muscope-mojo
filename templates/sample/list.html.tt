@@ -33,11 +33,8 @@ $(document).ready(function() {
      <thead>
      <tr>
        <th>Cruise</th>
-       <th>Station</th>
-       <th>Cast</th>
        <th>Investigator</th>
        <th>Sample</th>
-       <th>Type</th>
        <th>Cart</th>
      </tr>
      </thead>
@@ -45,13 +42,17 @@ $(document).ready(function() {
      <tbody>
      [% FOREACH sample IN samples %]
        <tr>
-         <td><a href="/cruise/view/[% sample.cast.station.cruise.id %]">[% sample.cast.station.cruise.cruise_name %]</a></td>
-         <td><a href="/station/view/[% sample.cast.station.id %]">[% sample.cast.station.station_number %]</a></td>
-         <td><a href="/cast/view/[% sample.cast.id %]">[% sample.cast.cast_number %]</a></td>
-         <td><a href="/investigator/view/[% sample.investigator.id %]">[% sample.investigator.last_name %], [% sample.investigator.first_name %]</a></td>
-         <td><a href="/sample/view/[% sample.id %]">[% sample.sample_name %]</a></td>
-         <td><a href="/sample_type/view/[% sample.sample_type_id %]">[% sample.sample_type.sample_type %]</a></td>
-         <td align="center"><a href="/cart/add/[% sample.id %]"><span class="glyphicon glyphicon-plus-sign" aria-hidden="true"></span></a></td>
+         <td><a href="/cruise/view/[% sample.cruise_id %]">[% sample.cruise.cruise_name %]</a></td>
+         <td>
+          [% SET invs = [] %]
+          [% FOREACH s2i IN sample.sample_to_investigators %]
+            [% invs.push("<a href=\"/investigator/view/\"" _ s2i.investigator.investigator_id _ "\">" _ s2i.investigator.last_name _ ", " _ s2i.investigator.first_name _ "</a>") %]
+          [% END %]
+          [% invs.join('; ') OR 'NA' %]
+        </td>
+        <td><a href="/sample/view/[% sample.id %]">[% sample.sample_name %]</a></td>
+        <td><a href="/sample_type/view/[% sample.sample_type_id %]">[% sample.sample_type.sample_type %]</a></td>
+        <td align="center"><a href="/cart/add/[% sample.id %]"><span class="glyphicon glyphicon-plus-sign" aria-hidden="true"></span></a></td>
        </tr>
      [% END %]
      </tbody>

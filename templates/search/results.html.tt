@@ -1,7 +1,7 @@
 [% 
   USE Comma;
   SET name_fields = {
-  'investigator'  = 'investigator_name',
+  'investigator'  = 'last_name',
   'sample'        = 'sample_name'
   'cruise'        = 'cruise_name',
 } %]

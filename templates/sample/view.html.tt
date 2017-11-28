@@ -14,8 +14,8 @@ $(document).ready(function() {
 [% USE Comma %]
 
 [%- 
-  SET latitude = sample.cast.station.latitude;
-  SET longitude = sample.cast.station.longitude;
+  SET latitude = sample.latitude_start;
+  SET longitude = sample.longitude_start;
   SET show_map = latitude AND longitude; 
 -%]
 
@@ -56,7 +56,7 @@ $(document).ready(function() {
 [% END %]
 
 <div class="row">
-  <h1 id="nav-tabs">Sample: [% sample.cast.station.cruise.cruise_name %] [% sample.sample_name %]</h1>
+  <h1 id="nav-tabs">Sample: [% sample.cruise.cruise_name %] [% sample.sample_name %]</h1>
   <div class="bs-component">
     <ul class="nav nav-tabs">
       <li class="active"><a href="#info" data-toggle="tab">Info</a></li>
@@ -76,51 +76,80 @@ $(document).ready(function() {
             </td>
           </tr>
           <tr>
-            <th>Sequence Name</th>
-            <td>[% sample.seq_name %]</td>
-          </tr>
-          <tr>
-            <th>Investigator</th>
+            [% num_inv = sample.sample_to_investigators_rs.count %]
+            <th>Investigators ([% num_inv | comma %])</th>
             <td>
-              <a href="/investigator/view/[% sample.investigator.id %]">[% sample.investigator.first_name %] [% sample.investigator.last_name %]</a>
+              [% IF num_inv > 0 %]
+                <ul>
+                [% FOREACH inv IN sample.sample_to_investigators %]
+                  <li><a href="/investigator/view/[% inv.investigator.id %]">[% inv.investigator.first_name %] [% inv.investigator.last_name %]</a></li>
+                [% END %]
+                </ul>
+              [% ELSE %]
+                NA
+              [% END %]
             </td>
           </tr>
           <tr>
             <th>Cruise</th>
             <td>
-              <a href="/cruise/view/[% sample.cast.station.cruise.id %]">[% sample.cast.station.cruise.cruise_name %]</a>
+              <a href="/cruise/view/[% sample.cruise_id %]">[% sample.cruise.cruise_name %]</a>
             </td>
           </tr>
           <tr>
             <th>Station</th>
-            <td>
-              <a href="/station/view/[% sample.cast.station.id %]">[% sample.cast.station.station_number %]</a>[% IF sample.cast.station.latitude AND sample.cast.station.longitude %] ([% sample.cast.station.latitude %], [% sample.cast.station.longitude %])[% END %]
-            </td>
+            <td>[% sample.station_number %]</td>
           </tr>
           <tr>
             <th>Cast</th>
-            <td>
-              <a href="/cast/view/[% sample.cast.id %]">[% sample.cast.cast_number %]</a>
-            </td>
+            <td>[% sample.cast_number %]</td>
           </tr>
           <tr>
-            <th>Depth</th>
-            <td>
-              [% sample.depth OR 'NA' %]
-            </td>
+            <th>Depth (m)</th>
+            <td>[% sample.depth OR 'NA' %]</td>
           </tr>
           <tr>
-            <th>Collection Date</th>
-            <td>[% sample.cast.collection_date OR 'NA' %]</td>
-          </tr>
-          <tr>
-            <th>Collection Time</th>
+            <th>Latitude</th>
             <td>
-              [% IF sample.cast.collection_time %]
-                [% sample.cast.collection_time %] [% sample.cast.collection_time_zone %]
-              [% ELSE %] 
+              [% IF sample.latitude_start AND sample.latitude_stop %]
+                [% sample.latitude_start %]..[% sample.latitude_stop %]
+              [% ELSIF sample.latitude_start %]
+                [% sample.latitude_start %]
+              [% ELSE %]
                 NA
-              [% END %] 
+              [% END %]
+            </td>
+          </tr>
+          <tr>
+            <th>Longitude</th>
+            <td>
+              [% IF sample.longitude_start AND sample.longitude_stop %]
+                [% sample.longitude_start %]..[% sample.longitude_stop %]
+              [% ELSIF sample.longitude_start %]
+                [% sample.longitude_start %]
+              [% ELSE %]
+                NA
+              [% END %]
+            </td>
+          </tr>
+          <tr>
+            <th>Collection Start</th>
+            <td>
+              [% IF sample.collection_start %]
+                [% sample.collection_start %] [% sample.collection_time_zone %]
+              [% ELSE %]
+                NA
+              [% END %]
+            </td>
+          </tr>
+          <tr>
+            <th>Collection Stop</th>
+            <td>
+              [% IF sample.collection_stop %]
+                [% sample.collection_stop %] [% sample.collection_time_zone %]
+              [% ELSE %]
+                NA
+              [% END %]
             </td>
           </tr>
         </table>
@@ -164,8 +193,8 @@ $(document).ready(function() {
             <tr>
               <td>[% file.sample_file_type.type %]</td>
               <td>
-                [% IF 0 # file.file.match('/iplant') %]
-                  <a href="http://datacommons.cyverse.org/browse[% file.file %]">[% file.file %]</a>
+                [% IF 0 # file.file.match('^/iplant') %]
+                  <a target="_blank" href="http://datacommons.cyverse.org/browse[% file.file %]">[% file.file %]</a>
                 [% ELSE %]
                   [% file.file %]
                 [% END %]

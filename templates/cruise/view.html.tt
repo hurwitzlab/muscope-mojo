@@ -72,9 +72,8 @@ $(document).ready(function() {
   <div class="bs-component">
     <ul class="nav nav-tabs">
       <li class="active"><a href="#info" data-toggle="tab">Info</a></li>
-      <li><a href="#stations" data-toggle="tab">Stations ([% cruise.stations_rs.count OR '0' %])</a></li>
-      <li><a href="#samples" data-toggle="tab">Samples ([% cruise.num_samples OR '0' %])</a></li>
-      <li><a href="#map" data-toggle="tab">Stations Map</a></li>
+      <li><a href="#samples" data-toggle="tab">Samples ([% cruise.samples_rs.count OR '0' %])</a></li>
+      <li><a href="#map" data-toggle="tab">Map</a></li>
     </ul>
 
     <div id="tabContent" class="tab-content">
@@ -89,7 +88,7 @@ $(document).ready(function() {
           </tr>
           <tr>
             <th>Num Samples</th>
-            <td>[% cruise.num_samples | comma %]</td>
+            <td>[% cruise.samples_rs.count | comma %]</td>
           </tr>
           <tr>
             <th>Investigators ([% cruise.investigators.size %])</th>
@@ -109,52 +108,16 @@ $(document).ready(function() {
         </table>
       </div>
 
-      <div class="tab-pane fade" id="stations">
-        <br/>
-        [% IF cruise.stations_rs.count > 0 %]
-          <table id="stations-tbl" class="table" cellspacing="0" width="100%">
-           <thead>
-           <tr>
-             <th>Name</th>
-             <th>Position</th>
-             <th># Casts</th>
-           </tr>
-           </thead>
-
-           <tbody>
-           [% FOREACH station IN cruise.stations %]
-             <tr>
-               <td><a href="/station/view/[% station.id %]">[% station.station_number %]</a></td>
-               <td>
-                 [% IF station.latitude AND station.longitude %]
-                   ([% station.latitude %], [% station.longitude %])
-                 [% ELSE %]
-                   NA
-                 [% END %]
-               </td>
-               <td>[% station.casts_rs.count OR '0' %]</td>
-             </tr>
-           [% END %]
-           </tbody>
-          </table>
-        [% ELSE %]
-          No stations.
-        [% END %]
-        <p>
-      </div>
-
       <div class="tab-pane fade" id="samples">
         <br/>
-        [% IF cruise.num_samples > 0 %]
+        [% IF cruise.samples_rs.count > 0 %]
           <table id="samples-tbl" class="table" cellspacing="0" width="100%">
            <thead>
            <tr>
              <th>Name</th>
-             <th>Station</th>
-             <th>Cast</th>
-             <th>Date</th>
-             <th>Time</th>
-             <th>Depth</th>
+             <th>Collection</th>
+             <th>Position</th>
+             <th>Depth (m)</th>
              <th>Cart</th>
            </tr>
            </thead>
@@ -163,11 +126,22 @@ $(document).ready(function() {
            [% FOREACH sample IN cruise.samples %]
              <tr>
                <td><a href="/sample/view/[% sample.sample_id %]">[% sample.sample_name %]</a></td>
-               <td><a href="/station/view/[% sample.cast.station.id %]">[% sample.cast.station.station_number %]</a></td>
-               <td><a href="/cast/view/[% sample.cast.id %]">[% sample.cast.cast_number %]</a></td>
-               <td>[% sample.cast.collection_date %]</td>
-               <td>[% sample.cast.collection_time %]</td>
-               <td>[% sample.depth %]</td>
+               <td>
+                 [% IF sample.collection_start %]
+                   [% sample.collection_start %] [% sample.collection_time_zone %][% IF sample.collection_stop %] - [% sample.collection_stop %] [% sample.collection_time_zone %][% END %]
+                 [% ELSE %]
+                   NA
+                 [% END %]
+               </td>
+               <td>
+                [% IF sample.latitude_start %]
+                  ([% sample.latitude_start %][% IF sample.longitude_start %], [% sample.longitude_start %][% ELSE %]NA[% END %])
+                [% END %]
+                [% IF sample.latitude_stop %]
+                  ([% sample.latitude_stop %][% IF sample.longitude_stop %], [% sample.longitude_stop %][% ELSE %]NA[% END %])
+                [% END %]
+               </td>
+               <td align="center">[% sample.depth %]</td>
                <td align="center"><a href="/cart/add/[% sample.id %]"><span class="glyphicon glyphicon-plus-sign" aria-hidden="true"></span></a></td>
              </tr>
            [% END %]

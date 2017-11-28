@@ -29,7 +29,7 @@ $(document).ready(function() {
         <td><a href="/investigator/view/[% inv.id %]">[% inv.last_name %], [% inv.first_name %]</a></td>
         <td>[% inv.institution OR '&nbsp;' %]</td>
         <td align="right">[% inv.num_cruises OR '0' | comma %]</td>
-        <td align="right">[% inv.samples_rs.count OR '0' | comma %]</td>
+        <td align="right">[% inv.sample_to_investigators_rs.count | comma %]</td>
       </tr>
     [% END %]
     </tbody>

@@ -19,7 +19,7 @@
       "redirect_url": "https://data.muscope.org/auth/"
     },
     "db": {
-        "name": "muscope",
+        "name": "muscope2",
         "user": "imicrobe",
         "password": "XgDeeWTAw4pI.",
         "driver": "mysql"

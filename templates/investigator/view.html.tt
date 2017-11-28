@@ -8,9 +8,10 @@ function initialize() {
   $.getJSON(
     '/sample/list.json?investigator_id=[% investigator.id %]',
     function(data) { 
+      //console.log(data);
       $.each(data, function(i, sample) {
-        if (sample.latitude && sample.longitude) {
-          var pos = new google.maps.LatLng(sample.latitude, sample.longitude);
+        if (sample.latitude_start && sample.longitude_start) {
+          var pos = new google.maps.LatLng(sample.latitude_start, sample.longitude_start);
 
           var marker = new google.maps.Marker({
             position: pos,
@@ -53,13 +54,14 @@ $(document).ready(function() {
 });
 </script>
 
+[% SET num_samples = investigator.sample_to_investigators_rs.count %]
 <div class="row">
   <h2 id="nav-tabs">[% title %]</h2>
   <div class="bs-component">
     <ul class="nav nav-tabs">
       <li class="active"><a href="#info" data-toggle="tab">Info</a></li>
       <li><a href="#cruises" data-toggle="tab">Cruises ([% investigator.num_cruises OR '0' | comma %])</a></li>
-      <li><a href="#samples" data-toggle="tab">Samples ([% investigator.samples_rs.count | comma %])</a></li>
+      <li><a href="#samples" data-toggle="tab">Samples ([% num_samples | comma %])</a></li>
       <li><a href="#project" data-toggle="tab">Project</a></li>
       <li><a href="#bio" data-toggle="tab">Bio</a></li>
       <li><a href="#map" data-toggle="tab">Samples Map</a></li>
@@ -99,7 +101,7 @@ $(document).ready(function() {
                 </td>
                 <td>[% cruise.start_date OR 'NA' %]</td>
                 <td>[% cruise.end_date OR 'NA' %]</td>
-                <td>[% cruise.num_samples OR '0' %]</td>
+                <td>[% cruise.samples_rs.count %]</td>
               </tr>
               [% END %]
             </tbody>
@@ -110,28 +112,33 @@ $(document).ready(function() {
       </div>
       <div class="tab-pane fade" id="samples">
         <br/>
-        [% IF investigator.samples_rs.count > 0 %]
+        [% IF num_samples > 0 %]
           <table id="samples-tbl" class="table" cellspacing="0" width="100%">
             <thead>
               <th>Cruise</th>
-              <th>Station</th>
               <th>Cast</th>
               <th>Sample Name</th>
+              <th>Pos</th>
             </thead>
             <tbody>
-              [% FOREACH sample IN investigator.samples %]
+              [% FOREACH s2i IN investigator.sample_to_investigators %]
               <tr>
                 <td>
-                  <a href="/cruise/view/[% sample.cast.station.cruise.id %]">[% sample.cast.station.cruise.cruise_name OR 'NA' %]</a>
+                  <a href="/cruise/view/[% s2i.sample.cruise_id %]">[% s2i.sample.cruise.cruise_name OR 'NA' %]</a>
                 </td>
                 <td>
-                  <a href="/station/view/[% sample.cast.station.id %]">[% sample.cast.station.station_number OR 'NA' %]</a>
+                  [% s2i.sample.cast_number OR 'NA' %]
                 </td>
                 <td>
-                  <a href="/cast/view/[% sample.cast.id %]">[% sample.cast.cast_number OR 'NA' %]</a>
+                  <a href="/sample/view/[% s2i.sample_id %]">[% s2i.sample.sample_name OR 'NA' %]</a>
                 </td>
                 <td>
-                  <a href="/sample/view/[% sample.id %]">[% sample.sample_name OR 'NA' %]</a>
+                  [% IF s2i.sample.latitude_start != '' AND s2i.sample.longitude_start != '' %]
+                    ([% s2i.sample.latitude_start %], [% s2i.sample.longitude_start %])
+
+                  [% ELSE %]
+                    NA
+                  [% END %]
                 </td>
               </tr>
               [% END %]

@@ -46,7 +46,7 @@ $(document).ready(function() {
             END;
           %]
         </td>
-        <td>[% cruise.num_samples | comma %]</td>
+        <td>[% cruise.samples_rs.count | comma %]</td>
       </tr>
     [% END %]
     </tbody>

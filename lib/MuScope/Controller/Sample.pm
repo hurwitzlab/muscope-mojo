@@ -70,23 +70,29 @@ sub list {
     my $self   = shift;
     my $db     = $self->db;
     my $schema = $self->db->schema;
-    my $where  = {};
 
+    my @sample_ids;
     if (my $inv_id = $self->param('investigator_id')) {
-        $where->{'investigator_id'} = $inv_id;
+        @sample_ids = @{
+            $db->dbh->selectcol_arrayref(
+                q[
+                    select sample_id
+                    from   sample_to_investigator
+                    where  investigator_id=?
+                ],
+                {},
+                ($inv_id)
+            )
+        };
+    }
+    else {
+        @sample_ids = @{
+            $db->dbh->selectcol_arrayref('select sample_id from sample')
+        };
     }
 
-    my @Samples = $schema->resultset('Sample')->search($where);
-    my $data    = sub {
-        map {
-            {
-                $_->get_inflated_columns,
-                latitude => $_->cast->station->latitude,
-                longitude => $_->cast->station->longitude,
-            }
-        } 
-        @Samples 
-    };
+    my @Samples = map { $schema->resultset('Sample')->find($_) } @sample_ids;
+    my $data = sub { map { { $_->get_inflated_columns() } } @Samples };
 
     $self->respond_to(
         json => sub { $self->render( json => [$data->()] ) },
