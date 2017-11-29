@@ -22,6 +22,27 @@ function fileBrowser(evt, elemId) {
   })
 }
 
+function fileBrowser2(evt, elemId) {
+  evt.preventDefault();
+  $('#browser-container').modal();
+  $('#browser').html('Loading...');
+  browser = new AgaveFileBrowser({
+    elementId:   "browser",
+    path:        "/scope/data/",
+    authToken:   "[% token.access_token %]",
+    baseUrl:     "https://agave.iplantc.org/files/v2/listings",
+    busyIconUrl: "/js/bower_components/agave-file-browser/spinner.gif"
+  });
+
+  $('#input-select').click(function() {
+    let selected = browser.getSelectedNodes();
+    if (selected.length > 0) {
+      $('#' + elemId).val(selected[0].id);
+      $('#browser-container').modal('hide');
+    }
+  })
+}
+
 // --------------------------------------------------
 function cartBrowser(evt, elemId) {
   evt.preventDefault();
@@ -142,7 +163,8 @@ $(function() {
       <td>
         <input name="[% input.id %]" id="[% input.id %]">
         <input class="btn btn-default" name="fileupload-[% input.id %]" id="fileupload-[% input.id %]" type="file" data-url="/app/file_upload.json" />
-        <button class="btn btn-default" onclick="fileBrowser(event, '[% input.id %]')">Cyverse</button>
+        <button class="btn btn-default" onclick="fileBrowser(event, '[% input.id %]')">CyVerse Home</button>
+        <button class="btn btn-default" onclick="fileBrowser2(event, '[% input.id %]')">CyVerse Shared</button>
         <button class="btn btn-default"[% IF c.session.items.size == 0; ' disabled'; END %] onclick="cartBrowser(event, '[% input.id %]')">Cart ([% c.session.items.size OR '0' %])</button>
       </td>
     </tr>
