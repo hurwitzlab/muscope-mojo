@@ -4,6 +4,8 @@ use Mojo::Base 'Mojolicious::Controller';
 use Data::Dump 'dump';
 use String::Trim qw(trim);
 use List::Util qw'all uniq';
+use Time::ParseDate 'parsedate';
+use DateTime;
 
 # ----------------------------------------------------------------------
 #sub info {
@@ -92,22 +94,11 @@ sub list {
     }
 
     my @Samples = map { $schema->resultset('Sample')->find($_) } @sample_ids;
-    my $data = sub { map { { $_->get_inflated_columns() } } @Samples };
 
     $self->respond_to(
-        json => sub { $self->render( json => [$data->()] ) },
-
         html => sub {
             $self->layout('default');
             $self->render( title => 'Samples', samples => \@Samples );
-        },
-
-        tab => sub {
-            $self->render( text => $self->tablify($data->()) );
-        },
-
-        txt => sub {
-            $self->render( text => dump($data->()) );
         },
     );
 }
@@ -241,6 +232,15 @@ sub search_params {
 }
 
 # ----------------------------------------------------------------------
+sub _make_dt {
+    if (my $val = shift) {
+        if (my $epoch = parsedate($val)) {
+            return DateTime->from_epoch(epoch => $epoch);
+        }
+    }
+}
+
+# ----------------------------------------------------------------------
 sub search_results {
     my $self         = shift;
     my $db           = $self->db;
@@ -274,20 +274,31 @@ sub search_results {
             next unless (defined $min && $min ne '')
                      || (defined $max && $max ne '');
 
-            if ($max < $min) {
-                ($min, $max) = ($max, $min);
-            }
-
-            if ($min == $max) {
-                $search{$name}{'$eq'} = $min;
-            }
-            else {
-                if (defined $min && $min =~ /\d+/) {
-                    $search{$name}{'$gte'} = $min;
+            if ($type eq 'date') {
+                if (my $min_date = _make_dt($min)) {
+                    $search{$name}{'$gte'} = $min_date;
                 }
 
-                if (defined $max && $max =~ /\d+/) {
-                    $search{$name}{'$lte'} = $max;
+                if (my $max_date = _make_dt($max)) {
+                    $search{$name}{'$lte'} = $max_date;
+                }
+            }
+            else {
+                if ($max < $min) {
+                    ($min, $max) = ($max, $min);
+                }
+
+                if ($min == $max) {
+                    $search{$name}{'$eq'} = $min;
+                }
+                else {
+                    if (defined $min && $min =~ /\d+/) {
+                        $search{$name}{'$gte'} = $min;
+                    }
+
+                    if (defined $max && $max =~ /\d+/) {
+                        $search{$name}{'$lte'} = $max;
+                    }
                 }
             }
         }

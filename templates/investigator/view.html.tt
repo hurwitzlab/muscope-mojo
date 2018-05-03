@@ -118,6 +118,7 @@ $(document).ready(function() {
               <th>Cruise</th>
               <th>Cast</th>
               <th>Sample Name</th>
+              <th>Type</th>
               <th>Pos</th>
             </thead>
             <tbody>
@@ -132,6 +133,7 @@ $(document).ready(function() {
                 <td>
                   <a href="/sample/view/[% s2i.sample_id %]">[% s2i.sample.sample_name OR 'NA' %]</a>
                 </td>
+                <td>[% s2i.sample.type %]</td>
                 <td>
                   [% IF s2i.sample.latitude_start != '' AND s2i.sample.longitude_start != '' %]
                     ([% s2i.sample.latitude_start %], [% s2i.sample.longitude_start %])

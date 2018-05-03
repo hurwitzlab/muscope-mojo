@@ -118,6 +118,7 @@ $(document).ready(function() {
              <th>Collection</th>
              <th>Position</th>
              <th>Depth (m)</th>
+             <th>Type</th>
              <th>Cart</th>
            </tr>
            </thead>
@@ -142,6 +143,7 @@ $(document).ready(function() {
                 [% END %]
                </td>
                <td align="center">[% sample.depth %]</td>
+               <td align="center">[% sample.type %]</td>
                <td align="center"><a href="/cart/add/[% sample.id %]"><span class="glyphicon glyphicon-plus-sign" aria-hidden="true"></span></a></td>
              </tr>
            [% END %]

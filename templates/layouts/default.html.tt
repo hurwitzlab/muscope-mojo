@@ -72,7 +72,7 @@
               <ul class="dropdown-menu" role="menu">
                 <li><a href="/search">General Search</a></li>
                 <li><a href="/sample/search">Sample Metadata Search</a></li>
-                <li><a href="/sample/map_search">Sample Map Search</a></li>
+                <!-- li><a href="/sample/map_search">Sample Map Search</a></li -->
               </ul>
             </li>
             <li class="dropdown">

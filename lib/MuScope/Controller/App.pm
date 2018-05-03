@@ -80,7 +80,7 @@ sub launch {
         $job->{'inputs'}     = { QUERY => $query };
         #$job->{'parameters'} = { SAMPLE_NAMES => join(',', @sample_names) };
     }
-    elsif ($app_name =~ /^muscope-b?last/i) {
+    elsif ($app_name =~ /^muscope-b?last/i || $app_name =~ /^ohana-b?last/i) {
         my $query  = _fix_inputs($self->param('QUERY')) or die "No QUERY\n";
         
         my $pct_id = $self->param('PCT_ID');

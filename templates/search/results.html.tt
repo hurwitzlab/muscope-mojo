@@ -4,6 +4,7 @@
   'investigator'  = 'last_name',
   'sample'        = 'sample_name'
   'cruise'        = 'cruise_name',
+  'sample_file'   = 'file',
 } %]
 <div class="row">
 <h1>Search</h1>

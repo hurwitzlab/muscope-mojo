@@ -100,7 +100,7 @@ function setParamValues(paramName, divId, datatype) {
       html = 'Error getting values for param ' + paramName;
     }
     else {
-      if (datatype == 'number') {
+      if (datatype == 'number' || datatype == 'date') {
         html = '<td>Min: <input name="min__' + paramName 
              + '" value="' + data[0] + '"/></td>'
              +  '<td>Max: <input name="max__' + paramName 
