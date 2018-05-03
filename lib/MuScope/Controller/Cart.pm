@@ -201,8 +201,8 @@ sub view {
             sample_id   => $_->id, 
             sample_name => $_->sample_name,
             sample_acc  => $_->sample_name,
-            cruise_id   => $_->cast->station->cruise->id,
-            cruise_name => $_->cast->station->cruise->cruise_name,
+            cruise_id   => $_->cruise_id,
+            cruise_name => $_->cruise->cruise_name,
         },
         @samples;
     };
