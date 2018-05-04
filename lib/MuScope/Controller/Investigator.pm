@@ -32,12 +32,21 @@ sub info {
 
 # ----------------------------------------------------------------------
 sub list {
-    my $self   = shift;
-    my $schema = $self->db->schema;
-    my $Invs   = $schema->resultset('Investigator')->search(
-        { investigator_id => { '>', '1' } } # skip "Unknown"
+    my $self    = shift;
+    my $schema  = $self->db->schema;
+    my $inv_ids = $self->db->dbh->selectall_arrayref(
+        q[
+            select i.investigator_id, count(s2i.sample_id) as num_samples
+            from   investigator i, sample_to_investigator s2i
+            where  i.investigator_id=s2i.investigator_id
+            group by 1
+            having num_samples > 0
+        ]
     );
-    my $data   = sub { map { {$_->get_inflated_columns()} } $Invs->all() };
+    
+    my @Invs = map { $schema->resultset('Investigator')->find($_->[0]) } 
+               @$inv_ids;
+    my $data = sub { map { {$_->get_inflated_columns()} } @Invs };
 
     $self->respond_to(
         json => sub {
@@ -46,7 +55,10 @@ sub list {
 
         html => sub {
             $self->layout('default');
-            $self->render( title => 'Investigators', investigators => $Invs );
+            $self->render( 
+                title         => 'Investigators', 
+                investigators => \@Invs 
+            );
         },
 
         txt => sub {
