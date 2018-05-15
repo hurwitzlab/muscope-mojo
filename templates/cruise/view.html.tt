@@ -87,6 +87,20 @@ $(document).ready(function() {
             </td>
           </tr>
           <tr>
+            <th>Dates</th>
+            <td>
+              [% IF cruise.start_date %][% cruise.start_date %][% END %][% IF cruise.end_date %]&nbsp;-&nbsp;[% cruise.end_date %][% END %]
+            </td>
+          </tr>
+          <tr>
+            <th>Website</th>
+            <td>[% IF cruise.website %]<a target="_blank" href="[% cruise.website %]">[% cruise.website %]</a>[% ELSE; 'NA'; END %]</td>
+          </tr>
+          <tr>
+            <th>Deployment</th>
+            <td>[% cruise.deployment OR 'NA' %]</td>
+          </tr>
+          <tr>
             <th>Num Samples</th>
             <td>[% cruise.samples_rs.count | comma %]</td>
           </tr>

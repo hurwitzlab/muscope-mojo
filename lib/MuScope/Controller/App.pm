@@ -75,17 +75,52 @@ sub launch {
     };
 
     if ($app_name =~ /^muscope-mash/i) {
-        my $query = _fix_inputs($self->param('QUERY'));
+        my $query = _fix_inputs($self->param('QUERY')) or die "No QUERY\n";
 
         $job->{'inputs'}     = { QUERY => $query };
-        #$job->{'parameters'} = { SAMPLE_NAMES => join(',', @sample_names) };
     }
-    elsif ($app_name =~ /^muscope-b?last/i || $app_name =~ /^ohana-b?last/i) {
+    elsif ($app_name =~ /^centrifuge/i) {
+        my $query = _fix_inputs($self->param('QUERY')) or die "No QUERY\n";
+
+        $job->{'inputs'}     = { QUERY => $query };
+        $job->{'parameters'} = { 
+            INDEX => $self->param('INDEX'),
+            EXCLUDE_TAXIDS => $self->param('EXCLUDE_TAXIDS'),
+            FORMAT => $self->param('FORMAT') 
+        };
+    }
+    elsif ($app_name =~ /^uproc/i) {
+        my $query = _fix_inputs($self->param('QUERY')) or die "No QUERY\n";
+
+        $job->{'inputs'}     = { QUERY => $query };
+        $job->{'parameters'} = {
+            SEQ_TYPE => $self->param('SEQ_TYPE'),
+            COUNTS => $self->param('EXCLUDE_TAXIDS'),
+            STATS => $self->param('FORMAT'),
+            LONG => $self->param('LONG'),
+            NUMERIC => $self->param('NUMERIC'),
+            OTHRESH => $self->param('OTHRESH'),
+            PTHRESH => $self->param('PTHRESH'),
+            PREDS => $self->param('PREDS'),
+            SHORT => $self->param('SHORT')
+        };
+    }
+    elsif ($app_name =~ /^muscope-blast/i || $app_name =~ /^ohana-blast/i) {
+        my $query  = _fix_inputs($self->param('QUERY')) or die "No QUERY\n";
+
+        $job->{'inputs'}     = { QUERY => $query };
+        $job->{'parameters'} = { 
+            PCT_ID => $self->param('PCT_ID') 
+        };
+    }
+    elsif ($app_name =~ /^muscope-last/i || $app_name =~ /^ohana-last/i) {
         my $query  = _fix_inputs($self->param('QUERY')) or die "No QUERY\n";
         
-        my $pct_id = $self->param('PCT_ID');
         $job->{'inputs'}     = { QUERY => $query };
-        $job->{'parameters'} = { PCT_ID => $pct_id };
+        $job->{'parameters'} = { 
+            PCT_ID => $self->param('PCT_ID'),
+            __LAST_DB_DIR => $self->param('__LAST_DB_DIR') 
+        };
     }
     else {
         my %params = %{ $self->req->params->to_hash };

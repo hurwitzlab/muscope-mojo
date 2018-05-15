@@ -133,15 +133,17 @@ $(function() {
     <td>[% app.longDescription OR app.shortDescription OR 'NA' %]</td>
   </tr>
   [% IF app.helpURI %]
+  <!--
     <tr>
       <th>Help</th>
-      <td><a href="[% app.helpURI %]">[% app.helpURI %]</a></td>
+      <td><a target="_blank" href="[% app.helpURI %]">[% app.helpURI %]</a></td>
     </tr>
   [% END %]
+  -->
   [% IF protocol %]
     <tr>
       <th>Protocol</th>
-      <td><a href="[% protocol %]"><span class="glyphicon glyphicon-question-sign"></span></a></td>
+      <td><a target="_blank" href="[% protocol %]"><span class="glyphicon glyphicon-question-sign"></span></a></td>
   [% END %]
   [% IF app.tags.size > 0 %]
     <tr>
@@ -178,7 +180,17 @@ $(function() {
     <tr>
       <th>[% param.details.label OR param.id %]</th>
       <td>
+      [% IF param.value.type == 'enumeration' %]
+        <select name="[% param.id %]">
+          <option value="">--Select--</option>
+          [% FOREACH e IN param.value.enum_values %]
+          [% x = e.items %]
+          <option [% IF x.0 == param.value.default; 'selected'; END %] value="[% x.0 %]">[% x.1 %]</option>
+          [% END %]
+        </select>
+      [% ELSE %]
         <input name="[% param.id %]" value="[% param.value.default %]">
+      [% END %]
       </td>
     </tr>
     [% END %]

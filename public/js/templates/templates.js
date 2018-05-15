@@ -22,7 +22,7 @@ templates['search-results'] = template({"1":function(container,depth0,helpers,pa
     + "\">"
     + alias2(alias1((depth0 != null ? depth0.investigator_name : depth0), depth0))
     + "</a></td>\n          <td>"
-    + alias2(alias1((depth0 != null ? depth0.sample_type : depth0), depth0))
+    + alias2(alias1((depth0 != null ? depth0.sequence_type : depth0), depth0))
     + "</td>\n"
     + ((stack1 = helpers.each.call(depth0 != null ? depth0 : (container.nullContext || {}),(depth0 != null ? depth0.search_values : depth0),{"name":"each","hash":{},"fn":container.program(4, data, 0),"inverse":container.noop,"data":data})) != null ? stack1 : "");
 },"4":function(container,depth0,helpers,partials,data) {

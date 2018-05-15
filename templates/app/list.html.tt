@@ -14,7 +14,7 @@
         <td><a href="/app/run/[% app.id %]">[% app.app_name %]</a></td>
         <td>
           [% IF app.protocol %]
-            <a href="[% app.protocol %]"><span class="glyphicon glyphicon-question-sign"></span></a>
+            <a target="_blank" href="[% app.protocol %]"><span class="glyphicon glyphicon-question-sign"></span></a>
           [% ELSE %]
             NA
           [% END %]
