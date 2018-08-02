@@ -10,11 +10,6 @@
   <div class="carousel-inner" role="listbox">
     <div class="item active">
       <div class="container text-center">
-        <img src="/img/carousel/carousel_1.jpg" height="500">
-      </div>
-    </div>
-    <div class="item">
-      <div class="container text-center">
         <img src="/img/carousel/carousel_2.jpg" height="500">
       </div>
     </div>
